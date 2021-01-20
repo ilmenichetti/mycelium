@@ -368,44 +368,44 @@ cv_simulated_p6<-mat.or.vec(dim(resampled_posteriors)[1], length(calib_data$t_6)
     
     for(k in 1:length(periods_vec1)){
         biomass_simulated_p1[i,k]<- (p1/mu1)*(1-exp(-mu1*(calib_data$t_1[k]-calib_data$t0_1[k])))+
-                                    ((a*p1)/mu1)*(cos(om)*calib_data$t_1[k]-exp(-mu1*(calib_data$t_1[k]-calib_data$t0_1[k]))*cos(om)*calib_data$t0_1[k])-
-                                    ((a*p1)/(om*mu1))*(1/(1+(1/(om^2*mu1^2))))*((1/mu1)*(sin(om)*calib_data$t_1[k]-exp(-mu1*(calib_data$t_1[k]-calib_data$t0_1[k]))*sin(om)*calib_data$t0_1[k])+
-                                                                                (1/(om*mu1^2))*(cos(om)*calib_data$t_1[k]-exp(-mu1*(calib_data$t_1[k]-calib_data$t0_1[k]))*cos(om)*calib_data$t0_1[k]));
+                                    ((a*p1)/mu1)*(cos(om*calib_data$t_1[k])-exp(-mu1*(calib_data$t_1[k]-calib_data$t0_1[k]))*cos(om*calib_data$t0_1[k]))-
+                                    ((a*p1)/(om*mu1))*(1/(1+(1/(om^2*mu1^2))))*((1/mu1)*(sin(om*calib_data$t_1[k])-exp(-mu1*(calib_data$t_1[k]-calib_data$t0_1[k]))*sin(om*calib_data$t0_1[k]))+
+                                                                                (1/(om*mu1^2))*(cos(om*calib_data$t_1[k])-exp(-mu1*(calib_data$t_1[k]-calib_data$t0_1[k]))*cos(om*calib_data$t0_1[k])));
                                     }
       
       for(k in 1:length(periods_vec1)){
         biomass_simulated_p2[i,k]<- (p2/mu2)*(1-exp(-mu2*(calib_data$t_2[k]-calib_data$t0_2[k])))+
-                                        ((a*p2)/mu2)*(cos(om)*calib_data$t_2[k]-exp(-mu2*(calib_data$t_2[k]-calib_data$t0_2[k]))*cos(om)*calib_data$t0_2[k])-
-                                        ((a*p2)/(om*mu2))*(1/(1+(1/(om^2*mu2^2))))*((1/mu2)*(sin(om)*calib_data$t_2[k]-exp(-mu2*(calib_data$t_2[k]-calib_data$t0_2[k]))*sin(om)*calib_data$t0_2[k])+
-                                                                                    (1/(om*mu2^2))*(cos(om)*calib_data$t_2[k]-exp(-mu2*(calib_data$t_2[k]-calib_data$t0_2[k]))*cos(om)*calib_data$t0_2[k]));
+                                        ((a*p2)/mu2)*(cos(om*calib_data$t_2[k])-exp(-mu2*(calib_data$t_2[k]-calib_data$t0_2[k]))*cos(om*calib_data$t0_2[k]))-
+                                        ((a*p2)/(om*mu2))*(1/(1+(1/(om^2*mu2^2))))*((1/mu2)*(sin(om*calib_data$t_2[k])-exp(-mu2*(calib_data$t_2[k]-calib_data$t0_2[k]))*sin(om*calib_data$t0_2[k]))+
+                                                                                    (1/(om*mu2^2))*(cos(om*calib_data$t_2[k])-exp(-mu2*(calib_data$t_2[k]-calib_data$t0_2[k]))*cos(om*calib_data$t0_2[k])));
                                     }
   
     for(k in 1:length(periods_vec1)){
         biomass_simulated_p3[i,k]<- (p3/mu3)*(1-exp(-mu3*(calib_data$t_3[k]-calib_data$t0_3[k])))+
-                                      ((a*p3)/mu3)*(cos(om)*calib_data$t_3[k]-exp(-mu3*(calib_data$t_3[k]-calib_data$t0_3[k]))*cos(om)*calib_data$t0_3[k])-
-                                      ((a*p3)/(om*mu3))*(1/(1+(1/(om^2*mu3^2))))*((1/mu3)*(sin(om)*calib_data$t_3[k]-exp(-mu3*(calib_data$t_3[k]-calib_data$t0_3[k]))*sin(om)*calib_data$t0_3[k])+
-                                                                                  (1/(om*mu3^2))*(cos(om)*calib_data$t_3[k]-exp(-mu3*(calib_data$t_3[k]-calib_data$t0_3[k]))*cos(om)*calib_data$t0_3[k]));
+                                      ((a*p3)/mu3)*(cos(om*calib_data$t_3[k])-exp(-mu3*(calib_data$t_3[k]-calib_data$t0_3[k]))*cos(om*calib_data$t0_3[k]))-
+                                      ((a*p3)/(om*mu3))*(1/(1+(1/(om^2*mu3^2))))*((1/mu3)*(sin(om*calib_data$t_3[k])-exp(-mu3*(calib_data$t_3[k]-calib_data$t0_3[k]))*sin(om*calib_data$t0_3[k]))+
+                                                                                  (1/(om*mu3^2))*(cos(om*calib_data$t_3[k])-exp(-mu3*(calib_data$t_3[k]-calib_data$t0_3[k]))*cos(om*calib_data$t0_3[k])));
                                     }
 
     for(k in 1:length(periods_vec1)){
         biomass_simulated_p4[i,k]<- (p4/mu4)*(1-exp(-mu4*(calib_data$t_4[k]-calib_data$t0_4[k])))+
-                                    ((a*p4)/mu4)*(cos(om)*calib_data$t_4[k]-exp(-mu4*(calib_data$t_4[k]-calib_data$t0_4[k]))*cos(om)*calib_data$t0_4[k])-
-                                    ((a*p4)/(om*mu4))*(1/(1+(1/(om^2*mu4^2))))*((1/mu4)*(sin(om)*calib_data$t_4[k]-exp(-mu4*(calib_data$t_4[k]-calib_data$t0_4[k]))*sin(om)*calib_data$t0_4[k])+
-                                                                                (1/(om*mu4^2))*(cos(om)*calib_data$t_4[k]-exp(-mu4*(calib_data$t_4[k]-calib_data$t0_4[k]))*cos(om)*calib_data$t0_4[k]));
+                                    ((a*p4)/mu4)*(cos(om*calib_data$t_4[k])-exp(-mu4*(calib_data$t_4[k]-calib_data$t0_4[k]))*cos(om*calib_data$t0_4[k]))-
+                                    ((a*p4)/(om*mu4))*(1/(1+(1/(om^2*mu4^2))))*((1/mu4)*(sin(om*calib_data$t_4[k])-exp(-mu4*(calib_data$t_4[k]-calib_data$t0_4[k]))*sin(om*calib_data$t0_4[k]))+
+                                                                                (1/(om*mu4^2))*(cos(om*calib_data$t_4[k])-exp(-mu4*(calib_data$t_4[k]-calib_data$t0_4[k]))*cos(om*calib_data$t0_4[k])));
                                     }
 
     for(k in 1:length(periods_vec1)){
         biomass_simulated_p5[i,k]<- (p5/mu5)*(1-exp(-mu5*(calib_data$t_5[k]-calib_data$t0_5[k])))+
-                                    ((a*p5)/mu5)*(cos(om)*calib_data$t_5[k]-exp(-mu5*(calib_data$t_5[k]-calib_data$t0_5[k]))*cos(om)*calib_data$t0_5[k])-
-                                    ((a*p5)/(om*mu5))*(1/(1+(1/(om^2*mu5^2))))*((1/mu5)*(sin(om)*calib_data$t_5[k]-exp(-mu5*(calib_data$t_5[k]-calib_data$t0_5[k]))*sin(om)*calib_data$t0_5[k])+
-                                                                                 (1/(om*mu5^2))*(cos(om)*calib_data$t_5[k]-exp(-mu5*(calib_data$t_5[k]-calib_data$t0_5[k]))*cos(om)*calib_data$t0_5[k]));
+                                    ((a*p5)/mu5)*(cos(om*calib_data$t_5[k])-exp(-mu5*(calib_data$t_5[k]-calib_data$t0_5[k]))*cos(om*calib_data$t0_5[k]))-
+                                    ((a*p5)/(om*mu5))*(1/(1+(1/(om^2*mu5^2))))*((1/mu5)*(sin(om*calib_data$t_5[k])-exp(-mu5*(calib_data$t_5[k]-calib_data$t0_5[k]))*sin(om*calib_data$t0_5[k]))+
+                                                                                 (1/(om*mu5^2))*(cos(om*calib_data$t_5[k])-exp(-mu5*(calib_data$t_5[k]-calib_data$t0_5[k]))*cos(om*calib_data$t0_5[k])));
                                   }
 
     for(k in 1:length(periods_vec1)){
         biomass_simulated_p6[i,k]<- (p6/mu6)*(1-exp(-mu6*(calib_data$t_6[k]-calib_data$t0_6[k])))+
-                                    ((a*p6)/mu6)*(cos(om)*calib_data$t_6[k]-exp(-mu6*(calib_data$t_6[k]-calib_data$t0_6[k]))*cos(om)*calib_data$t0_6[k])-
-                                    ((a*p6)/(om*mu6))*(1/(1+(1/(om^2*mu6^2))))*((1/mu6)*(sin(om)*calib_data$t_6[k]-exp(-mu6*(calib_data$t_6[k]-calib_data$t0_6[k]))*sin(om)*calib_data$t0_6[k])+
-                                                                                 (1/(om*mu6^2))*(cos(om)*calib_data$t_6[k]-exp(-mu6*(calib_data$t_6[k]-calib_data$t0_6[k]))*cos(om)*calib_data$t0_6[k]));
+                                    ((a*p6)/mu6)*(cos(om*calib_data$t_6[k])-exp(-mu6*(calib_data$t_6[k]-calib_data$t0_6[k]))*cos(om*calib_data$t0_6[k]))-
+                                    ((a*p6)/(om*mu6))*(1/(1+(1/(om^2*mu6^2))))*((1/mu6)*(sin(om*calib_data$t_6[k])-exp(-mu6*(calib_data$t_6[k]-calib_data$t0_6[k]))*sin(om*calib_data$t0_6[k]))+
+                                                                                 (1/(om*mu6^2))*(cos(om*calib_data$t_6[k])-exp(-mu6*(calib_data$t_6[k]-calib_data$t0_6[k]))*cos(om*calib_data$t0_6[k])));
                                   }
 
     # #calculate the RMSE for each parameter set

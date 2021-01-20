@@ -43,7 +43,6 @@ parameters { // this block defines just the parameters to calibrate
   real<lower=0> mu4; //  mortality time 5
   real<lower=0> mu5; //  mortality time 5
   real<lower=0> mu6; //  mortality time 5
-  real<lower=0> z; // proportionality coefficient of tree growth
   real<lower=0> a; // a
 
 } // <<<<<<<<<<<<<<<  end of parameters block
@@ -84,9 +83,9 @@ model { //this block runs the model and the MCMC sampling
   for (i in 1:N){ // loop for each class
 
         biomass1[i]= (p1/mu1)*(1-exp(-mu1*(t_1[i]-t0_1[i])))+
-                    ((a*p1)/mu1)*(cos(om)*t_1[i]-exp(-mu1*(t_1[i]-t0_1[i]))*cos(om)*t0_1[i])-
-                     ((a*p1)/(om*mu1))*(1/(1+(1/(om^2*mu1^2))))*((1/mu1)*(sin(om)*t_1[i]-exp(-mu1*(t_1[i]-t0_1[i]))*sin(om)*t0_1[i])+
-                     (1/(om*mu1^2))*(cos(om)*t_1[i]-exp(-mu1*(t_1[i]-t0_1[i]))*cos(om)*t0_1[i]));
+                    ((a*p1)/mu1)*(cos(om*t_1[i])-exp(-mu1*(t_1[i]-t0_1[i]))*cos(om*t0_1[i]))-
+                     ((a*p1)/(om*mu1))*(1/(1+(1/(om^2*mu1^2))))*((1/mu1)*(sin(om*t_1[i])-exp(-mu1*(t_1[i]-t0_1[i]))*sin(om*t0_1[i]))+
+                     (1/(om*mu1^2))*(cos(om*t_1[i])-exp(-mu1*(t_1[i]-t0_1[i]))*cos(om*t0_1[i])));
 
          biom1[i] ~ normal(biomass1[i], // this line compares the simulation with the results
                            max_sd1); //the sigma is the standard deviation in the data
@@ -94,9 +93,9 @@ model { //this block runs the model and the MCMC sampling
 
 
         biomass2[i]= (p2/mu2)*(1-exp(-mu2*(t_2[i]-t0_2[i])))+
-                    ((a*p2)/mu2)*(cos(om)*t_2[i]-exp(-mu2*(t_2[i]-t0_2[i]))*cos(om)*t0_2[i])-
-                     ((a*p2)/(om*mu2))*(1/(1+(1/(om^2*mu2^2))))*((1/mu2)*(sin(om)*t_2[i]-exp(-mu2*(t_2[i]-t0_2[i]))*sin(om)*t0_2[i])+
-                     (1/(om*mu2^2))*(cos(om)*t_2[i]-exp(-mu2*(t_2[i]-t0_2[i]))*cos(om)*t0_2[i]));
+                    ((a*p2)/mu2)*(cos(om*t_2[i])-exp(-mu2*(t_2[i]-t0_2[i]))*cos(om*t0_2[i]))-
+                     ((a*p2)/(om*mu2))*(1/(1+(1/(om^2*mu2^2))))*((1/mu2)*(sin(om*t_2[i])-exp(-mu2*(t_2[i]-t0_2[i]))*sin(om*t0_2[i]))+
+                     (1/(om*mu2^2))*(cos(om*t_2[i])-exp(-mu2*(t_2[i]-t0_2[i]))*cos(om*t0_2[i])));
 
         biom2[i] ~ normal(biomass2[i], // this line compares the simulation with the results
                            max_sd2); //the sigma is the standard deviation in the data
@@ -104,9 +103,9 @@ model { //this block runs the model and the MCMC sampling
 
 
         biomass3[i]= (p3/mu3)*(1-exp(-mu3*(t_3[i]-t0_3[i])))+
-                    ((a*p3)/mu3)*(cos(om)*t_3[i]-exp(-mu3*(t_3[i]-t0_3[i]))*cos(om)*t0_3[i])-
-                     ((a*p3)/(om*mu3))*(1/(1+(1/(om^2*mu3^2))))*((1/mu3)*(sin(om)*t_3[i]-exp(-mu3*(t_3[i]-t0_3[i]))*sin(om)*t0_3[i])+
-                     (1/(om*mu3^2))*(cos(om)*t_3[i]-exp(-mu3*(t_3[i]-t0_3[i]))*cos(om)*t0_3[i]));
+                    ((a*p3)/mu3)*(cos(om*t_3[i])-exp(-mu3*(t_3[i]-t0_3[i]))*cos(om*t0_3[i]))-
+                     ((a*p3)/(om*mu3))*(1/(1+(1/(om^2*mu3^2))))*((1/mu3)*(sin(om*t_3[i])-exp(-mu3*(t_3[i]-t0_3[i]))*sin(om*t0_3[i]))+
+                     (1/(om*mu3^2))*(cos(om*t_3[i])-exp(-mu3*(t_3[i]-t0_3[i]))*cos(om*t0_3[i])));
 
         biom3[i] ~ normal(biomass3[i], // this line compares the simulation with the results
                            max_sd3); //the sigma is the standard deviation in the data
@@ -114,9 +113,9 @@ model { //this block runs the model and the MCMC sampling
 
 
         biomass4[i]= (p4/mu4)*(1-exp(-mu4*(t_4[i]-t0_4[i])))+
-                    ((a*p4)/mu4)*(cos(om)*t_4[i]-exp(-mu4*(t_4[i]-t0_4[i]))*cos(om)*t0_4[i])-
-                     ((a*p4)/(om*mu4))*(1/(1+(1/(om^2*mu4^2))))*((1/mu4)*(sin(om)*t_4[i]-exp(-mu4*(t_4[i]-t0_4[i]))*sin(om)*t0_4[i])+
-                     (1/(om*mu4^2))*(cos(om)*t_4[i]-exp(-mu4*(t_4[i]-t0_4[i]))*cos(om)*t0_4[i]));
+                    ((a*p4)/mu4)*(cos(om*t_4[i])-exp(-mu4*(t_4[i]-t0_4[i]))*cos(om*t0_4[i]))-
+                     ((a*p4)/(om*mu4))*(1/(1+(1/(om^2*mu4^2))))*((1/mu4)*(sin(om*t_4[i])-exp(-mu4*(t_4[i]-t0_4[i]))*sin(om*t0_4[i]))+
+                     (1/(om*mu4^2))*(cos(om*t_4[i])-exp(-mu4*(t_4[i]-t0_4[i]))*cos(om*t0_4[i])));
 
 
         biom4[i] ~ normal(biomass4[i], // this line compares the simulation with the results
@@ -125,17 +124,17 @@ model { //this block runs the model and the MCMC sampling
 
 
         biomass5[i]= (p5/mu5)*(1-exp(-mu5*(t_5[i]-t0_5[i])))+
-                    ((a*p5)/mu5)*(cos(om)*t_5[i]-exp(-mu5*(t_5[i]-t0_5[i]))*cos(om)*t0_5[i])-
-                     ((a*p5)/(om*mu5))*(1/(1+(1/(om^2*mu5^2))))*((1/mu5)*(sin(om)*t_5[i]-exp(-mu5*(t_4[i]-t0_5[i]))*sin(om)*t0_5[i])+
-                     (1/(om*mu5^2))*(cos(om)*t_5[i]-exp(-mu5*(t_5[i]-t0_5[i]))*cos(om)*t0_5[i]));
+                    ((a*p5)/mu5)*(cos(om*t_5[i])-exp(-mu5*(t_5[i]-t0_5[i]))*cos(om*t0_5[i]))-
+                     ((a*p5)/(om*mu5))*(1/(1+(1/(om^2*mu5^2))))*((1/mu5)*(sin(om*t_5[i])-exp(-mu5*(t_4[i]-t0_5[i]))*sin(om*t0_5[i]))+
+                     (1/(om*mu5^2))*(cos(om*t_5[i])-exp(-mu5*(t_5[i]-t0_5[i]))*cos(om*t0_5[i])));
 
         biom5[i] ~ normal(biomass5[i], // this line compares the simulation with the results
                            max_sd5); //the sigma is the standard deviation in the data
 
         biomass6[i]= (p6/mu6)*(1-exp(-mu6*(t_6[i]-t0_6[i])))+
-                    ((a*p6)/mu6)*(cos(om)*t_6[i]-exp(-mu6*(t_6[i]-t0_6[i]))*cos(om)*t0_6[i])-
-                     ((a*p6)/(om*mu6))*(1/(1+(1/(om^2*mu6^2))))*((1/mu6)*(sin(om)*t_6[i]-exp(-mu6*(t_6[i]-t0_6[i]))*sin(om)*t0_6[i])+
-                     (1/(om*mu6^2))*(cos(om)*t_6[i]-exp(-mu6*(t_6[i]-t0_6[i]))*cos(om)*t0_6[i]));
+                    ((a*p6)/mu6)*(cos(om*t_6[i])-exp(-mu6*(t_6[i]-t0_6[i]))*cos(om*t0_6[i]))-
+                     ((a*p6)/(om*mu6))*(1/(1+(1/(om^2*mu6^2))))*((1/mu6)*(sin(om*t_6[i])-exp(-mu6*(t_6[i]-t0_6[i]))*sin(om*t0_6[i]))+
+                     (1/(om*mu6^2))*(cos(om*t_6[i])-exp(-mu6*(t_6[i]-t0_6[i]))*cos(om*t0_6[i])));
 
         biom6[i] ~ normal(biomass6[i], // this line compares the simulation with the results
                            max_sd6); //the sigma is the standard deviation in the data
