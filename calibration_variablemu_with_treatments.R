@@ -7,6 +7,8 @@ library(modeest) #
 library(plyr) #
 library(lubridate) #
 library(shape) #
+library(violinmplot) #
+library(readODS)
 
 
 ###defining some custom functions
@@ -160,7 +162,7 @@ calib_data<-list(N=length(biom1),
 ########################################################################################################
 ########################################  MCMC CALIBRATION  ############################################
 Sys.setenv(STAN_NUM_THREADS=4)
-iterations=10000
+iterations=1000
 chain_length=floor(iterations/2) #the algorithm will discard the initial iterations for warmup
 fit <- stan(file = 'Myc_model_trees_variablemu_with_treatments.stan', data = calib_data,  chains = 4, iter = iterations, cores=4, warmup = iterations-chain_length)
 ########################################################################################################
@@ -379,48 +381,48 @@ cv_simulated_p6<-mat.or.vec(dim(resampled_posteriors)[1], length(calib_data$time
     for(k in 1:length(periods_vec1)){
         if(periods_vec1[k]==1){
         biomass_simulated_p1[i,k]<- (p1)/mu1*(1-exp(-mu1*(calib_data$time1[k]-calib_data$start1[k])))+
-          ((a1*p1)/mu1)*(cos(om*calib_data$time1[k])-exp(-mu1*(calib_data$time1[k]-calib_data$start1[k]))*cos(om)*calib_data$start1[k])-
-          ((a1*p1)/(om*mu1))*(1/(1+(1/(om^2*mu1^2))))*((1/mu1)*(sin(om)*calib_data$time1[k]-exp(-mu1*(calib_data$time1[k]-calib_data$start1[k]))*sin(om)*calib_data$start1[k])+
-                                                      (1/(om*mu1^2))*(cos(om*calib_data$time1[k])-exp(-mu1*(calib_data$time1[k]-calib_data$start1[k]))*cos(om)*calib_data$start1[k]));
+          ((a1*p1)/mu1)*(cos(om*calib_data$time1[k])-exp(-mu1*(calib_data$time1[k]-calib_data$start1[k]))*cos(om*calib_data$start1[k]))-
+          ((a1*p1)/(om*mu1))*(1/(1+(1/(om^2*mu1^2))))*((1/mu1)*(sin(om*calib_data$time1[k])-exp(-mu1*(calib_data$time1[k]-calib_data$start1[k]))*sin(om*calib_data$start1[k]))+
+                                                      (1/(om*mu1^2))*(cos(om*calib_data$time1[k])-exp(-mu1*(calib_data$time1[k]-calib_data$start1[k]))*cos(om*calib_data$start1[k])));
         } else if (periods_vec1[k]==2){
           biomass_simulated_p1[i,k]<- (p1)/mu1*(1-exp(-mu1*(calib_data$time1[k]-calib_data$start1[k])))+
-            ((a1*p1)/mu1)*(cos(om*calib_data$time1[k])-exp(-mu1*(calib_data$time1[k]-calib_data$start1[k]))*cos(om)*calib_data$start1[k])-
-            ((a1*p1)/(om*mu1))*(1/(1+(1/(om^2*mu1^2))))*((1/mu1)*(sin(om)*calib_data$time1[k]-exp(-mu1*(calib_data$time1[k]-calib_data$start1[k]))*sin(om)*calib_data$start1[k])+
-                                                           (1/(om*mu1^2))*(cos(om*calib_data$time1[k])-exp(-mu1*(calib_data$time1[k]-calib_data$start1[k]))*cos(om)*calib_data$start1[k]));
+            ((a1*p1)/mu1)*(cos(om*calib_data$time1[k])-exp(-mu1*(calib_data$time1[k]-calib_data$start1[k]))*cos(om*calib_data$start1[k]))-
+            ((a1*p1)/(om*mu1))*(1/(1+(1/(om^2*mu1^2))))*((1/mu1)*(sin(om*calib_data$time1[k])-exp(-mu1*(calib_data$time1[k]-calib_data$start1[k]))*sin(om*calib_data$start1[k]))+
+                                                           (1/(om*mu1^2))*(cos(om*calib_data$time1[k])-exp(-mu1*(calib_data$time1[k]-calib_data$start1[k]))*cos(om*calib_data$start1[k])));
         } else if (periods_vec1[k]==3){
           biomass_simulated_p1[i,k]<- (p1)/mu1*(1-exp(-mu1*(calib_data$time1[k]-calib_data$start1[k])))+
-            ((a1*p1)/mu1)*(cos(om*calib_data$time1[k])-exp(-mu1*(calib_data$time1[k]-calib_data$start1[k]))*cos(om)*calib_data$start1[k])-
-            ((a1*p1)/(om*mu1))*(1/(1+(1/(om^2*mu1^2))))*((1/mu1)*(sin(om)*calib_data$time1[k]-exp(-mu1*(calib_data$time1[k]-calib_data$start1[k]))*sin(om)*calib_data$start1[k])+
-                                                           (1/(om*mu1^2))*(cos(om*calib_data$time1[k])-exp(-mu1*(calib_data$time1[k]-calib_data$start1[k]))*cos(om)*calib_data$start1[k]));
+            ((a1*p1)/mu1)*(cos(om*calib_data$time1[k])-exp(-mu1*(calib_data$time1[k]-calib_data$start1[k]))*cos(om*calib_data$start1[k]))-
+            ((a1*p1)/(om*mu1))*(1/(1+(1/(om^2*mu1^2))))*((1/mu1)*(sin(om*calib_data$time1[k])-exp(-mu1*(calib_data$time1[k]-calib_data$start1[k]))*sin(om*calib_data$start1[k]))+
+                                                           (1/(om*mu1^2))*(cos(om*calib_data$time1[k])-exp(-mu1*(calib_data$time1[k]-calib_data$start1[k]))*cos(om*calib_data$start1[k])));
         } else if (periods_vec1[k]==4){
           biomass_simulated_p1[i,k]<- (p1)/mu1*(1-exp(-mu1*(calib_data$time1[k]-calib_data$start1[k])))+
-            ((a1*p1)/mu1)*(cos(om*calib_data$time1[k])-exp(-mu1*(calib_data$time1[k]-calib_data$start1[k]))*cos(om)*calib_data$start1[k])-
-            ((a1*p1)/(om*mu1))*(1/(1+(1/(om^2*mu1^2))))*((1/mu1)*(sin(om)*calib_data$time1[k]-exp(-mu1*(calib_data$time1[k]-calib_data$start1[k]))*sin(om)*calib_data$start1[k])+
-                                                           (1/(om*mu1^2))*(cos(om*calib_data$time1[k])-exp(-mu1*(calib_data$time1[k]-calib_data$start1[k]))*cos(om)*calib_data$start1[k]));
+            ((a1*p1)/mu1)*(cos(om*calib_data$time1[k])-exp(-mu1*(calib_data$time1[k]-calib_data$start1[k]))*cos(om*calib_data$start1[k]))-
+            ((a1*p1)/(om*mu1))*(1/(1+(1/(om^2*mu1^2))))*((1/mu1)*(sin(om*calib_data$time1[k])-exp(-mu1*(calib_data$time1[k]-calib_data$start1[k]))*sin(om*calib_data$start1[k]))+
+                                                           (1/(om*mu1^2))*(cos(om*calib_data$time1[k])-exp(-mu1*(calib_data$time1[k]-calib_data$start1[k]))*cos(om*calib_data$start1[k])));
         }
     }
     a2=z*mean(tree2);
       for(k in 1:length(periods_vec1)){
         if(periods_vec2[k]==1){
         biomass_simulated_p2[i,k]<- (p2)/mu2*(1-exp(-mu2*(calib_data$time2[k]-calib_data$start2[k])))+
-        ((a2*p2)/mu2)*(cos(om*calib_data$time2[k])-exp(-mu2*(calib_data$time2[k]-calib_data$start2[k]))*cos(om)*calib_data$start2[k])-
-        ((a2*p2)/(om*mu2))*(1/(1+(1/(om^2*mu2^2))))*((1/mu2)*(sin(om)*calib_data$time2[k]-exp(-mu2*(calib_data$time2[k]-calib_data$start2[k]))*sin(om)*calib_data$start2[k])+
-                                                    (1/(om*mu2^2))*(cos(om*calib_data$time2[k])-exp(-mu2*(calib_data$time2[k]-calib_data$start2[k]))*cos(om)*calib_data$start2[k]));
+        ((a2*p2)/mu2)*(cos(om*calib_data$time2[k])-exp(-mu2*(calib_data$time2[k]-calib_data$start2[k]))*cos(om*calib_data$start2[k]))-
+        ((a2*p2)/(om*mu2))*(1/(1+(1/(om^2*mu2^2))))*((1/mu2)*(sin(om*calib_data$time2[k])-exp(-mu2*(calib_data$time2[k]-calib_data$start2[k]))*sin(om*calib_data$start2[k]))+
+                                                    (1/(om*mu2^2))*(cos(om*calib_data$time2[k])-exp(-mu2*(calib_data$time2[k]-calib_data$start2[k]))*cos(om*calib_data$start2[k])));
       } else if (periods_vec2[k]==2){
         biomass_simulated_p2[i,k]<- (p2)/mu2*(1-exp(-mu2*(calib_data$time2[k]-calib_data$start2[k])))+
-          ((a2*p2)/mu2)*(cos(om*calib_data$time2[k])-exp(-mu2*(calib_data$time2[k]-calib_data$start2[k]))*cos(om)*calib_data$start2[k])-
-          ((a2*p2)/(om*mu2))*(1/(1+(1/(om^2*mu2^2))))*((1/mu2)*(sin(om)*calib_data$time2[k]-exp(-mu2*(calib_data$time2[k]-calib_data$start2[k]))*sin(om)*calib_data$start2[k])+
-                                                         (1/(om*mu2^2))*(cos(om*calib_data$time2[k])-exp(-mu2*(calib_data$time2[k]-calib_data$start2[k]))*cos(om)*calib_data$start2[k]));
+          ((a2*p2)/mu2)*(cos(om*calib_data$time2[k])-exp(-mu2*(calib_data$time2[k]-calib_data$start2[k]))*cos(om*calib_data$start2[k]))-
+          ((a2*p2)/(om*mu2))*(1/(1+(1/(om^2*mu2^2))))*((1/mu2)*(sin(om*calib_data$time2[k])-exp(-mu2*(calib_data$time2[k]-calib_data$start2[k]))*sin(om*calib_data$start2[k]))+
+                                                         (1/(om*mu2^2))*(cos(om*calib_data$time2[k])-exp(-mu2*(calib_data$time2[k]-calib_data$start2[k]))*cos(om*calib_data$start2[k])));
       } else if (periods_vec2[k]==3){
         biomass_simulated_p2[i,k]<- (p2)/mu2*(1-exp(-mu2*(calib_data$time2[k]-calib_data$start2[k])))+
-          ((a2*p2)/mu2)*(cos(om*calib_data$time2[k])-exp(-mu2*(calib_data$time2[k]-calib_data$start2[k]))*cos(om)*calib_data$start2[k])-
-          ((a2*p2)/(om*mu2))*(1/(1+(1/(om^2*mu2^2))))*((1/mu2)*(sin(om)*calib_data$time2[k]-exp(-mu2*(calib_data$time2[k]-calib_data$start2[k]))*sin(om)*calib_data$start2[k])+
-                                                         (1/(om*mu2^2))*(cos(om*calib_data$time2[k])-exp(-mu2*(calib_data$time2[k]-calib_data$start2[k]))*cos(om)*calib_data$start2[k]));
+          ((a2*p2)/mu2)*(cos(om*calib_data$time2[k])-exp(-mu2*(calib_data$time2[k]-calib_data$start2[k]))*cos(om*calib_data$start2[k]))-
+          ((a2*p2)/(om*mu2))*(1/(1+(1/(om^2*mu2^2))))*((1/mu2)*(sin(om*calib_data$time2[k])-exp(-mu2*(calib_data$time2[k]-calib_data$start2[k]))*sin(om*calib_data$start2[k]))+
+                                                         (1/(om*mu2^2))*(cos(om*calib_data$time2[k])-exp(-mu2*(calib_data$time2[k]-calib_data$start2[k]))*cos(om*calib_data$start2[k])));
       } else if (periods_vec2[k]==4){
         biomass_simulated_p2[i,k]<- (p2)/mu2*(1-exp(-mu2*(calib_data$time2[k]-calib_data$start2[k])))+
-          ((a2*p2)/mu2)*(cos(om*calib_data$time2[k])-exp(-mu2*(calib_data$time2[k]-calib_data$start2[k]))*cos(om)*calib_data$start2[k])-
-          ((a2*p2)/(om*mu2))*(1/(1+(1/(om^2*mu2^2))))*((1/mu2)*(sin(om)*calib_data$time2[k]-exp(-mu2*(calib_data$time2[k]-calib_data$start2[k]))*sin(om)*calib_data$start2[k])+
-                                                         (1/(om*mu2^2))*(cos(om*calib_data$time2[k])-exp(-mu2*(calib_data$time2[k]-calib_data$start2[k]))*cos(om)*calib_data$start2[k]));
+          ((a2*p2)/mu2)*(cos(om*calib_data$time2[k])-exp(-mu2*(calib_data$time2[k]-calib_data$start2[k]))*cos(om*calib_data$start2[k]))-
+          ((a2*p2)/(om*mu2))*(1/(1+(1/(om^2*mu2^2))))*((1/mu2)*(sin(om*calib_data$time2[k])-exp(-mu2*(calib_data$time2[k]-calib_data$start2[k]))*sin(om*calib_data$start2[k]))+
+                                                         (1/(om*mu2^2))*(cos(om*calib_data$time2[k])-exp(-mu2*(calib_data$time2[k]-calib_data$start2[k]))*cos(om*calib_data$start2[k])));
       }
     }
 
@@ -428,24 +430,24 @@ cv_simulated_p6<-mat.or.vec(dim(resampled_posteriors)[1], length(calib_data$time
     for(k in 1:length(periods_vec1)){
         if(periods_vec3[k]==1){
         biomass_simulated_p3[i,k]<- (p3)/mu3*(1-exp(-mu3*(calib_data$time3[k]-calib_data$start3[k])))+
-        ((a3*p3)/mu3)*(cos(om*calib_data$time3[k])-exp(-mu3*(calib_data$time3[k]-calib_data$start3[k]))*cos(om)*calib_data$start3[k])-
-        ((a3*p3)/(om*mu3))*(1/(1+(1/(om^2*mu3^2))))*((1/mu3)*(sin(om)*calib_data$time3[k]-exp(-mu3*(calib_data$time3[k]-calib_data$start3[k]))*sin(om)*calib_data$start3[k])+
-                                                    (1/(om*mu3^2))*(cos(om*calib_data$time3[k])-exp(-mu3*(calib_data$time3[k]-calib_data$start3[k]))*cos(om)*calib_data$start3[k]));
+        ((a3*p3)/mu3)*(cos(om*calib_data$time3[k])-exp(-mu3*(calib_data$time3[k]-calib_data$start3[k]))*cos(om*calib_data$start3[k]))-
+        ((a3*p3)/(om*mu3))*(1/(1+(1/(om^2*mu3^2))))*((1/mu3)*(sin(om*calib_data$time3[k])-exp(-mu3*(calib_data$time3[k]-calib_data$start3[k]))*sin(om*calib_data$start3[k]))+
+                                                    (1/(om*mu3^2))*(cos(om*calib_data$time3[k])-exp(-mu3*(calib_data$time3[k]-calib_data$start3[k]))*cos(om*calib_data$start3[k])));
       } else if (periods_vec3[k]==2){
         biomass_simulated_p3[i,k]<- (p3)/mu3*(1-exp(-mu3*(calib_data$time3[k]-calib_data$start3[k])))+
-          ((a3*p3)/mu3)*(cos(om*calib_data$time3[k])-exp(-mu3*(calib_data$time3[k]-calib_data$start3[k]))*cos(om)*calib_data$start3[k])-
-          ((a3*p3)/(om*mu3))*(1/(1+(1/(om^2*mu3^2))))*((1/mu3)*(sin(om)*calib_data$time3[k]-exp(-mu3*(calib_data$time3[k]-calib_data$start3[k]))*sin(om)*calib_data$start3[k])+
-                                                         (1/(om*mu3^2))*(cos(om*calib_data$time3[k])-exp(-mu3*(calib_data$time3[k]-calib_data$start3[k]))*cos(om)*calib_data$start3[k]));
+          ((a3*p3)/mu3)*(cos(om*calib_data$time3[k])-exp(-mu3*(calib_data$time3[k]-calib_data$start3[k]))*cos(om*calib_data$start3[k]))-
+          ((a3*p3)/(om*mu3))*(1/(1+(1/(om^2*mu3^2))))*((1/mu3)*(sin(om*calib_data$time3[k])-exp(-mu3*(calib_data$time3[k]-calib_data$start3[k]))*sin(om*calib_data$start3[k]))+
+                                                         (1/(om*mu3^2))*(cos(om*calib_data$time3[k])-exp(-mu3*(calib_data$time3[k]-calib_data$start3[k]))*cos(om*calib_data$start3[k])));
       } else if (periods_vec3[k]==3){
         biomass_simulated_p3[i,k]<- (p3)/mu3*(1-exp(-mu3*(calib_data$time3[k]-calib_data$start3[k])))+
-          ((a3*p3)/mu3)*(cos(om*calib_data$time3[k])-exp(-mu3*(calib_data$time3[k]-calib_data$start3[k]))*cos(om)*calib_data$start3[k])-
-          ((a3*p3)/(om*mu3))*(1/(1+(1/(om^2*mu3^2))))*((1/mu3)*(sin(om)*calib_data$time3[k]-exp(-mu3*(calib_data$time3[k]-calib_data$start3[k]))*sin(om)*calib_data$start3[k])+
-                                                         (1/(om*mu3^2))*(cos(om*calib_data$time3[k])-exp(-mu3*(calib_data$time3[k]-calib_data$start3[k]))*cos(om)*calib_data$start3[k]));
+          ((a3*p3)/mu3)*(cos(om*calib_data$time3[k])-exp(-mu3*(calib_data$time3[k]-calib_data$start3[k]))*cos(om*calib_data$start3[k]))-
+          ((a3*p3)/(om*mu3))*(1/(1+(1/(om^2*mu3^2))))*((1/mu3)*(sin(om*calib_data$time3[k])-exp(-mu3*(calib_data$time3[k]-calib_data$start3[k]))*sin(om*calib_data$start3[k]))+
+                                                         (1/(om*mu3^2))*(cos(om*calib_data$time3[k])-exp(-mu3*(calib_data$time3[k]-calib_data$start3[k]))*cos(om*calib_data$start3[k])));
       } else if (periods_vec3[k]==4){
         biomass_simulated_p3[i,k]<- (p3)/mu3*(1-exp(-mu3*(calib_data$time3[k]-calib_data$start3[k])))+
-          ((a3*p3)/mu3)*(cos(om*calib_data$time3[k])-exp(-mu3*(calib_data$time3[k]-calib_data$start3[k]))*cos(om)*calib_data$start3[k])-
-          ((a3*p3)/(om*mu3))*(1/(1+(1/(om^2*mu3^2))))*((1/mu3)*(sin(om)*calib_data$time3[k]-exp(-mu3*(calib_data$time3[k]-calib_data$start3[k]))*sin(om)*calib_data$start3[k])+
-                                                         (1/(om*mu3^2))*(cos(om*calib_data$time3[k])-exp(-mu3*(calib_data$time3[k]-calib_data$start3[k]))*cos(om)*calib_data$start3[k]));
+          ((a3*p3)/mu3)*(cos(om*calib_data$time3[k])-exp(-mu3*(calib_data$time3[k]-calib_data$start3[k]))*cos(om*calib_data$start3[k]))-
+          ((a3*p3)/(om*mu3))*(1/(1+(1/(om^2*mu3^2))))*((1/mu3)*(sin(om*calib_data$time3[k])-exp(-mu3*(calib_data$time3[k]-calib_data$start3[k]))*sin(om*calib_data$start3[k]))+
+                                                         (1/(om*mu3^2))*(cos(om*calib_data$time3[k])-exp(-mu3*(calib_data$time3[k]-calib_data$start3[k]))*cos(om*calib_data$start3[k])));
       }
     }
 
@@ -453,24 +455,24 @@ cv_simulated_p6<-mat.or.vec(dim(resampled_posteriors)[1], length(calib_data$time
     for(k in 1:length(periods_vec1)){
         if(periods_vec4[k]==1){
         biomass_simulated_p4[i,k]<- (p4)/mu4*(1-exp(-mu4*(calib_data$time4[k]-calib_data$start4[k])))+
-        ((a4*p4)/mu4)*(cos(om*calib_data$time4[k])-exp(-mu4*(calib_data$time4[k]-calib_data$start4[k]))*cos(om)*calib_data$start4[k])-
-        ((a4*p4)/(om*mu4))*(1/(1+(1/(om^2*mu4^2))))*((1/mu4)*(sin(om)*calib_data$time4[k]-exp(-mu4*(calib_data$time4[k]-calib_data$start4[k]))*sin(om)*calib_data$start4[k])+
-                                                    (1/(om*mu4^2))*(cos(om*calib_data$time4[k])-exp(-mu4*(calib_data$time4[k]-calib_data$start4[k]))*cos(om)*calib_data$start4[k]));
+        ((a4*p4)/mu4)*(cos(om*calib_data$time4[k])-exp(-mu4*(calib_data$time4[k]-calib_data$start4[k]))*cos(om*calib_data$start4[k]))-
+        ((a4*p4)/(om*mu4))*(1/(1+(1/(om^2*mu4^2))))*((1/mu4)*(sin(om*calib_data$time4[k])-exp(-mu4*(calib_data$time4[k]-calib_data$start4[k]))*sin(om*calib_data$start4[k]))+
+                                                    (1/(om*mu4^2))*(cos(om*calib_data$time4[k])-exp(-mu4*(calib_data$time4[k]-calib_data$start4[k]))*cos(om*calib_data$start4[k])));
       } else if (periods_vec4[k]==2){
         biomass_simulated_p4[i,k]<- (p4)/mu4*(1-exp(-mu4*(calib_data$time4[k]-calib_data$start4[k])))+
-          ((a4*p4)/mu4)*(cos(om*calib_data$time4[k])-exp(-mu4*(calib_data$time4[k]-calib_data$start4[k]))*cos(om)*calib_data$start4[k])-
-          ((a4*p4)/(om*mu4))*(1/(1+(1/(om^2*mu4^2))))*((1/mu4)*(sin(om)*calib_data$time4[k]-exp(-mu4*(calib_data$time4[k]-calib_data$start4[k]))*sin(om)*calib_data$start4[k])+
-                                                         (1/(om*mu4^2))*(cos(om*calib_data$time4[k])-exp(-mu4*(calib_data$time4[k]-calib_data$start4[k]))*cos(om)*calib_data$start4[k]));
+          ((a4*p4)/mu4)*(cos(om*calib_data$time4[k])-exp(-mu4*(calib_data$time4[k]-calib_data$start4[k]))*cos(om*calib_data$start4[k]))-
+          ((a4*p4)/(om*mu4))*(1/(1+(1/(om^2*mu4^2))))*((1/mu4)*(sin(om*calib_data$time4[k])-exp(-mu4*(calib_data$time4[k]-calib_data$start4[k]))*sin(om*calib_data$start4[k]))+
+                                                         (1/(om*mu4^2))*(cos(om*calib_data$time4[k])-exp(-mu4*(calib_data$time4[k]-calib_data$start4[k]))*cos(om*calib_data$start4[k])));
       } else if (periods_vec4[k]==3){
         biomass_simulated_p4[i,k]<- (p4)/mu4*(1-exp(-mu4*(calib_data$time4[k]-calib_data$start4[k])))+
-          ((a4*p4)/mu4)*(cos(om*calib_data$time4[k])-exp(-mu4*(calib_data$time4[k]-calib_data$start4[k]))*cos(om)*calib_data$start4[k])-
-          ((a4*p4)/(om*mu4))*(1/(1+(1/(om^2*mu4^2))))*((1/mu4)*(sin(om)*calib_data$time4[k]-exp(-mu4*(calib_data$time4[k]-calib_data$start4[k]))*sin(om)*calib_data$start4[k])+
-                                                         (1/(om*mu4^2))*(cos(om*calib_data$time4[k])-exp(-mu4*(calib_data$time4[k]-calib_data$start4[k]))*cos(om)*calib_data$start4[k]));
+          ((a4*p4)/mu4)*(cos(om*calib_data$time4[k])-exp(-mu4*(calib_data$time4[k]-calib_data$start4[k]))*cos(om*calib_data$start4[k]))-
+          ((a4*p4)/(om*mu4))*(1/(1+(1/(om^2*mu4^2))))*((1/mu4)*(sin(om*calib_data$time4[k])-exp(-mu4*(calib_data$time4[k]-calib_data$start4[k]))*sin(om*calib_data$start4[k]))+
+                                                         (1/(om*mu4^2))*(cos(om*calib_data$time4[k])-exp(-mu4*(calib_data$time4[k]-calib_data$start4[k]))*cos(om*calib_data$start4[k])));
       } else if (periods_vec4[k]==4){
         biomass_simulated_p4[i,k]<- (p4)/mu4*(1-exp(-mu4*(calib_data$time4[k]-calib_data$start4[k])))+
-          ((a4*p4)/mu4)*(cos(om*calib_data$time4[k])-exp(-mu4*(calib_data$time4[k]-calib_data$start4[k]))*cos(om)*calib_data$start4[k])-
-          ((a4*p4)/(om*mu4))*(1/(1+(1/(om^2*mu4^2))))*((1/mu4)*(sin(om)*calib_data$time4[k]-exp(-mu4*(calib_data$time4[k]-calib_data$start4[k]))*sin(om)*calib_data$start4[k])+
-                                                         (1/(om*mu4^2))*(cos(om*calib_data$time4[k])-exp(-mu4*(calib_data$time4[k]-calib_data$start4[k]))*cos(om)*calib_data$start4[k]));
+          ((a4*p4)/mu4)*(cos(om*calib_data$time4[k])-exp(-mu4*(calib_data$time4[k]-calib_data$start4[k]))*cos(om*calib_data$start4[k]))-
+          ((a4*p4)/(om*mu4))*(1/(1+(1/(om^2*mu4^2))))*((1/mu4)*(sin(om*calib_data$time4[k])-exp(-mu4*(calib_data$time4[k]-calib_data$start4[k]))*sin(om*calib_data$start4[k]))+
+                                                         (1/(om*mu4^2))*(cos(om*calib_data$time4[k])-exp(-mu4*(calib_data$time4[k]-calib_data$start4[k]))*cos(om*calib_data$start4[k])));
       }
     }
 
@@ -478,24 +480,24 @@ cv_simulated_p6<-mat.or.vec(dim(resampled_posteriors)[1], length(calib_data$time
     for(k in 1:length(periods_vec1)){
       if(periods_vec5[k]==1){
         biomass_simulated_p5[i,k]<- (p5)/mu5*(1-exp(-mu5*(calib_data$time5[k]-calib_data$start5[k])))+
-        ((a5*p5)/mu5)*(cos(om*calib_data$time5[k])-exp(-mu5*(calib_data$time5[k]-calib_data$start5[k]))*cos(om)*calib_data$start5[k])-
-        ((a5*p5)/(om*mu5))*(1/(1+(1/(om^2*mu5^2))))*((1/mu5)*(sin(om)*calib_data$time5[k]-exp(-mu5*(calib_data$time5[k]-calib_data$start5[k]))*sin(om)*calib_data$start5[k])+
-                                                     (1/(om*mu5^2))*(cos(om*calib_data$time5[k])-exp(-mu5*(calib_data$time5[k]-calib_data$start5[k]))*cos(om)*calib_data$start5[k]));
+        ((a5*p5)/mu5)*(cos(om*calib_data$time5[k])-exp(-mu5*(calib_data$time5[k]-calib_data$start5[k]))*cos(om*calib_data$start5[k]))-
+        ((a5*p5)/(om*mu5))*(1/(1+(1/(om^2*mu5^2))))*((1/mu5)*(sin(om*calib_data$time5[k])-exp(-mu5*(calib_data$time5[k]-calib_data$start5[k]))*sin(om*calib_data$start5[k]))+
+                                                     (1/(om*mu5^2))*(cos(om*calib_data$time5[k])-exp(-mu5*(calib_data$time5[k]-calib_data$start5[k]))*cos(om*calib_data$start5[k])));
       } else if (periods_vec5[k]==2){
         biomass_simulated_p5[i,k]<- (p5)/mu5*(1-exp(-mu5*(calib_data$time5[k]-calib_data$start5[k])))+
-          ((a5*p5)/mu5)*(cos(om*calib_data$time5[k])-exp(-mu5*(calib_data$time5[k]-calib_data$start5[k]))*cos(om)*calib_data$start5[k])-
-          ((a5*p5)/(om*mu5))*(1/(1+(1/(om^2*mu5^2))))*((1/mu5)*(sin(om)*calib_data$time5[k]-exp(-mu5*(calib_data$time5[k]-calib_data$start5[k]))*sin(om)*calib_data$start5[k])+
-                                                         (1/(om*mu5^2))*(cos(om*calib_data$time5[k])-exp(-mu5*(calib_data$time5[k]-calib_data$start5[k]))*cos(om)*calib_data$start5[k]));
+          ((a5*p5)/mu5)*(cos(om*calib_data$time5[k])-exp(-mu5*(calib_data$time5[k]-calib_data$start5[k]))*cos(om*calib_data$start5[k]))-
+          ((a5*p5)/(om*mu5))*(1/(1+(1/(om^2*mu5^2))))*((1/mu5)*(sin(om*calib_data$time5[k])-exp(-mu5*(calib_data$time5[k]-calib_data$start5[k]))*sin(om*calib_data$start5[k]))+
+                                                         (1/(om*mu5^2))*(cos(om*calib_data$time5[k])-exp(-mu5*(calib_data$time5[k]-calib_data$start5[k]))*cos(om*calib_data$start5[k])));
       } else if (periods_vec5[k]==3){
         biomass_simulated_p5[i,k]<- (p5)/mu5*(1-exp(-mu5*(calib_data$time5[k]-calib_data$start5[k])))+
-          ((a5*p5)/mu5)*(cos(om*calib_data$time5[k])-exp(-mu5*(calib_data$time5[k]-calib_data$start5[k]))*cos(om)*calib_data$start5[k])-
-          ((a5*p5)/(om*mu5))*(1/(1+(1/(om^2*mu5^2))))*((1/mu5)*(sin(om)*calib_data$time5[k]-exp(-mu5*(calib_data$time5[k]-calib_data$start5[k]))*sin(om)*calib_data$start5[k])+
-                                                         (1/(om*mu5^2))*(cos(om*calib_data$time5[k])-exp(-mu5*(calib_data$time5[k]-calib_data$start5[k]))*cos(om)*calib_data$start5[k]));
+          ((a5*p5)/mu5)*(cos(om*calib_data$time5[k])-exp(-mu5*(calib_data$time5[k]-calib_data$start5[k]))*cos(om*calib_data$start5[k]))-
+          ((a5*p5)/(om*mu5))*(1/(1+(1/(om^2*mu5^2))))*((1/mu5)*(sin(om*calib_data$time5[k])-exp(-mu5*(calib_data$time5[k]-calib_data$start5[k]))*sin(om*calib_data$start5[k]))+
+                                                         (1/(om*mu5^2))*(cos(om*calib_data$time5[k])-exp(-mu5*(calib_data$time5[k]-calib_data$start5[k]))*cos(om*calib_data$start5[k])));
       } else if (periods_vec5[k]==4){
         biomass_simulated_p5[i,k]<- (p5)/mu5*(1-exp(-mu5*(calib_data$time5[k]-calib_data$start5[k])))+
-          ((a5*p5)/mu5)*(cos(om*calib_data$time5[k])-exp(-mu5*(calib_data$time5[k]-calib_data$start5[k]))*cos(om)*calib_data$start5[k])-
-          ((a5*p5)/(om*mu5))*(1/(1+(1/(om^2*mu5^2))))*((1/mu5)*(sin(om)*calib_data$time5[k]-exp(-mu5*(calib_data$time5[k]-calib_data$start5[k]))*sin(om)*calib_data$start5[k])+
-                                                         (1/(om*mu5^2))*(cos(om*calib_data$time5[k])-exp(-mu5*(calib_data$time5[k]-calib_data$start5[k]))*cos(om)*calib_data$start5[k]));
+          ((a5*p5)/mu5)*(cos(om*calib_data$time5[k])-exp(-mu5*(calib_data$time5[k]-calib_data$start5[k]))*cos(om*calib_data$start5[k]))-
+          ((a5*p5)/(om*mu5))*(1/(1+(1/(om^2*mu5^2))))*((1/mu5)*(sin(om*calib_data$time5[k])-exp(-mu5*(calib_data$time5[k]-calib_data$start5[k]))*sin(om*calib_data$start5[k]))+
+                                                         (1/(om*mu5^2))*(cos(om*calib_data$time5[k])-exp(-mu5*(calib_data$time5[k]-calib_data$start5[k]))*cos(om*calib_data$start5[k])));
       }
     }
 
@@ -503,24 +505,24 @@ cv_simulated_p6<-mat.or.vec(dim(resampled_posteriors)[1], length(calib_data$time
     for(k in 1:length(periods_vec1)){
       if(periods_vec6[k]==1){
         biomass_simulated_p6[i,k]<- (p6)/mu6*(1-exp(-mu6*(calib_data$time6[k]-calib_data$start6[k])))+
-        ((a6*p6)/mu6)*(cos(om*calib_data$time6[k])-exp(-mu6*(calib_data$time6[k]-calib_data$start6[k]))*cos(om)*calib_data$start6[k])-
-        ((a6*p6)/(om*mu6))*(1/(1+(1/(om^2*mu6^2))))*((1/mu6)*(sin(om)*calib_data$time6[k]-exp(-mu6*(calib_data$time6[k]-calib_data$start6[k]))*sin(om)*calib_data$start6[k])+
-                                                     (1/(om*mu6^2))*(cos(om*calib_data$time6[k])-exp(-mu6*(calib_data$time6[k]-calib_data$start6[k]))*cos(om)*calib_data$start6[k]));
+        ((a6*p6)/mu6)*(cos(om*calib_data$time6[k])-exp(-mu6*(calib_data$time6[k]-calib_data$start6[k]))*cos(om*calib_data$start6[k]))-
+        ((a6*p6)/(om*mu6))*(1/(1+(1/(om^2*mu6^2))))*((1/mu6)*(sin(om*calib_data$time6[k])-exp(-mu6*(calib_data$time6[k]-calib_data$start6[k]))*sin(om*calib_data$start6[k]))+
+                                                     (1/(om*mu6^2))*(cos(om*calib_data$time6[k])-exp(-mu6*(calib_data$time6[k]-calib_data$start6[k]))*cos(om*calib_data$start6[k])));
       } else if(periods_vec6[k]==2){
         biomass_simulated_p6[i,k]<- (p6)/mu6*(1-exp(-mu6*(calib_data$time6[k]-calib_data$start6[k])))+
-          ((a6*p6)/mu6)*(cos(om*calib_data$time6[k])-exp(-mu6*(calib_data$time6[k]-calib_data$start6[k]))*cos(om)*calib_data$start6[k])-
-          ((a6*p6)/(om*mu6))*(1/(1+(1/(om^2*mu6^2))))*((1/mu6)*(sin(om)*calib_data$time6[k]-exp(-mu6*(calib_data$time6[k]-calib_data$start6[k]))*sin(om)*calib_data$start6[k])+
-                                                         (1/(om*mu6^2))*(cos(om*calib_data$time6[k])-exp(-mu6*(calib_data$time6[k]-calib_data$start6[k]))*cos(om)*calib_data$start6[k]));
+          ((a6*p6)/mu6)*(cos(om*calib_data$time6[k])-exp(-mu6*(calib_data$time6[k]-calib_data$start6[k]))*cos(om*calib_data$start6[k]))-
+          ((a6*p6)/(om*mu6))*(1/(1+(1/(om^2*mu6^2))))*((1/mu6)*(sin(om*calib_data$time6[k])-exp(-mu6*(calib_data$time6[k]-calib_data$start6[k]))*sin(om*calib_data$start6[k]))+
+                                                         (1/(om*mu6^2))*(cos(om*calib_data$time6[k])-exp(-mu6*(calib_data$time6[k]-calib_data$start6[k]))*cos(om*calib_data$start6[k])));
       } else if(periods_vec6[k]==3){
         biomass_simulated_p6[i,k]<- (p6)/mu6*(1-exp(-mu6*(calib_data$time6[k]-calib_data$start6[k])))+
-          ((a6*p6)/mu6)*(cos(om*calib_data$time6[k])-exp(-mu6*(calib_data$time6[k]-calib_data$start6[k]))*cos(om)*calib_data$start6[k])-
-          ((a6*p6)/(om*mu6))*(1/(1+(1/(om^2*mu6^2))))*((1/mu6)*(sin(om)*calib_data$time6[k]-exp(-mu6*(calib_data$time6[k]-calib_data$start6[k]))*sin(om)*calib_data$start6[k])+
-                                                         (1/(om*mu6^2))*(cos(om*calib_data$time6[k])-exp(-mu6*(calib_data$time6[k]-calib_data$start6[k]))*cos(om)*calib_data$start6[k]));
+          ((a6*p6)/mu6)*(cos(om*calib_data$time6[k])-exp(-mu6*(calib_data$time6[k]-calib_data$start6[k]))*cos(om*calib_data$start6[k]))-
+          ((a6*p6)/(om*mu6))*(1/(1+(1/(om^2*mu6^2))))*((1/mu6)*(sin(om*calib_data$time6[k])-exp(-mu6*(calib_data$time6[k]-calib_data$start6[k]))*sin(om*calib_data$start6[k]))+
+                                                         (1/(om*mu6^2))*(cos(om*calib_data$time6[k])-exp(-mu6*(calib_data$time6[k]-calib_data$start6[k]))*cos(om*calib_data$start6[k])));
       } else if(periods_vec6[k]==4){
         biomass_simulated_p6[i,k]<- (p6)/mu6*(1-exp(-mu6*(calib_data$time6[k]-calib_data$start6[k])))+
-          ((a6*p6)/mu6)*(cos(om*calib_data$time6[k])-exp(-mu6*(calib_data$time6[k]-calib_data$start6[k]))*cos(om)*calib_data$start6[k])-
-          ((a6*p6)/(om*mu6))*(1/(1+(1/(om^2*mu6^2))))*((1/mu6)*(sin(om)*calib_data$time6[k]-exp(-mu6*(calib_data$time6[k]-calib_data$start6[k]))*sin(om)*calib_data$start6[k])+
-                                                         (1/(om*mu6^2))*(cos(om*calib_data$time6[k])-exp(-mu6*(calib_data$time6[k]-calib_data$start6[k]))*cos(om)*calib_data$start6[k]));
+          ((a6*p6)/mu6)*(cos(om*calib_data$time6[k])-exp(-mu6*(calib_data$time6[k]-calib_data$start6[k]))*cos(om*calib_data$start6[k]))-
+          ((a6*p6)/(om*mu6))*(1/(1+(1/(om^2*mu6^2))))*((1/mu6)*(sin(om*calib_data$time6[k])-exp(-mu6*(calib_data$time6[k]-calib_data$start6[k]))*sin(om*calib_data$start6[k]))+
+                                                         (1/(om*mu6^2))*(cos(om*calib_data$time6[k])-exp(-mu6*(calib_data$time6[k]-calib_data$start6[k]))*cos(om*calib_data$start6[k])));
       }
     }
 
@@ -556,11 +558,11 @@ biom_range<-range(c(calib_data$biom1, calib_data$biom2, calib_data$biom3, calib_
                   c(biomass_simulated_p1, biomass_simulated_p2, biomass_simulated_p3, biomass_simulated_p4, biomass_simulated_p5, biomass_simulated_p6), na.rm = T)
 
 
-plot(calib_data$biom2, biomass_simulated_p2[1500,], ylim=c(0, biom_range[2]), col=times_palette[1], pch=15, main=class_names[1], ylab=expression(paste("Biomass, g m"^"-2")), xlab="")
-plot(calib_data$biom2, biomass_simulated_p2[1701,], ylim=c(0, biom_range[2]), col=times_palette[1], pch=15, main=class_names[1], ylab=expression(paste("Biomass, g m"^"-2")), xlab="")
+plot(calib_data$biom2, biomass_simulated_p2[100,], ylim=c(0, biom_range[2]), col=times_palette[1], pch=15, main=class_names[1], ylab=expression(paste("Biomass, g m"^"-2")), xlab="")
+plot(calib_data$biom2, biomass_simulated_p2[101,], ylim=c(0, biom_range[2]), col=times_palette[1], pch=15, main=class_names[1], ylab=expression(paste("Biomass, g m"^"-2")), xlab="")
 
-plot(calib_data$biom1, biomass_simulated_p1[1500,], ylim=c(0, biom_range[2]), col=times_palette[1], pch=15, main=class_names[1], ylab=expression(paste("Biomass, g m"^"-2")), xlab="")
-plot(calib_data$biom1, biomass_simulated_p1[1001,], ylim=c(0, biom_range[2]), col=times_palette[1], pch=15, main=class_names[1], ylab=expression(paste("Biomass, g m"^"-2")), xlab="")
+plot(calib_data$biom1, biomass_simulated_p1[100,], ylim=c(0, biom_range[2]), col=times_palette[1], pch=15, main=class_names[1], ylab=expression(paste("Biomass, g m"^"-2")), xlab="")
+plot(calib_data$biom1, biomass_simulated_p1[101,], ylim=c(0, biom_range[2]), col=times_palette[1], pch=15, main=class_names[1], ylab=expression(paste("Biomass, g m"^"-2")), xlab="")
 
 
 
@@ -579,7 +581,7 @@ ID6<-(dataset[dataset$classes==levels(dataset$classes)[6],]$No.1)
 #plotting the biomass simulation together with the data
 png("Scatter_plot_variablemu_with_treatments.png", width=4000, height=2500, res=350)
 par(mfrow=c(2,3), mar=c(5,5,2,2))
-means<-colMeans(biomass_simulated_p1)
+means<-colMeans(biomass_simulated_p1, na.rm = T)
 sds<-colSdApply(biomass_simulated_p1)
 plotrange=c(0, max(c(means,calib_data$biom1)))
 plot(calib_data$biom1, means, ylim=plotrange, xlim=plotrange, col=times_palette[1], main=class_names[1], pch=as.numeric(as.factor(round(calib_data$time1/10)*10)), ylab=expression(paste("Predicted, Biomass, g m"^"-2")), xlab=expression(paste("Measured, Biomass, g m"^"-2")))
@@ -588,35 +590,35 @@ legend("topright","(a)", bty="n")
 legend("topleft", levels(as.factor(round(calib_data$time1/10)*10)), pch=1:5,cex=1.2, bty="n")
 
 
-means<-colMeans(biomass_simulated_p2)
+means<-colMeans(biomass_simulated_p2, na.rm = T)
 sds<-colSdApply(biomass_simulated_p2)
 plotrange=c(0, max(c(means,calib_data$biom2)))
 plot(calib_data$biom2, means, ylim=plotrange, xlim=plotrange, col=times_palette[2], pch=as.numeric(as.factor(round(calib_data$time2/10)*10)), main=class_names[2], ylab=expression(paste("Predicted, Biomass, g m"^"-2")), xlab=expression(paste("Measured, Biomass, g m"^"-2")))
 arrows(calib_data$biom2, means-sds, calib_data$biom2, means+sds, length=0.03, angle=90, code=3, col=times_palette_alpha[2])
 legend("topright","(b)", bty="n")
 
-means<-colMeans(biomass_simulated_p3)
+means<-colMeans(biomass_simulated_p3, na.rm = T)
 sds<-colSdApply(biomass_simulated_p3)
 plotrange=c(0, max(c(means,calib_data$biom3)))
 plot(calib_data$biom3, means, ylim=plotrange, xlim=plotrange, col=times_palette[3], pch=as.numeric(as.factor(round(calib_data$time2/10)*10)), main=class_names[3], ylab=expression(paste("Predicted, Biomass, g m"^"-2")), xlab=expression(paste("Measured, Biomass, g m"^"-2")))
 arrows(calib_data$biom3, means-sds, calib_data$biom3, means+sds, length=0.03, angle=90, code=3, col=times_palette_alpha[3])
 legend("topright","(c)", bty="n")
 
-means<-colMeans(biomass_simulated_p4)
+means<-colMeans(biomass_simulated_p4, na.rm = T)
 sds<-colSdApply(biomass_simulated_p4)
 plotrange=c(0, max(c(means,calib_data$biom4)))
 plot(calib_data$biom4, means, ylim=plotrange, xlim=plotrange, col=times_palette[4], pch=as.numeric(as.factor(round(calib_data$time2/10)*10)), main=class_names[4], ylab=expression(paste("Predicted, Biomass, g m"^"-2")), xlab=expression(paste("Measured, Biomass, g m"^"-2")))
 arrows(calib_data$biom4, means-sds, calib_data$biom4, means+sds, length=0.03, angle=90, code=3, col=times_palette_alpha[4])
 legend("topright","(d)", bty="n")
 
-means<-colMeans(biomass_simulated_p5)
+means<-colMeans(biomass_simulated_p5, na.rm = T)
 sds<-colSdApply(biomass_simulated_p5)
 plotrange=c(0, max(c(means,calib_data$biom5)))
 plot(calib_data$biom5, means, ylim=plotrange, xlim=plotrange, col=times_palette[5], pch=as.numeric(as.factor(round(calib_data$time3/10)*10)), main=class_names[5], ylab=expression(paste("Predicted, Biomass, g m"^"-2")), xlab=expression(paste("Measured, Biomass, g m"^"-2")))
 arrows(calib_data$biom5, means-sds, calib_data$biom5, means+sds, length=0.03, angle=90, code=3, col=times_palette_alpha[5])
 legend("topright","(e)", bty="n")
 
-means<-colMeans(biomass_simulated_p6)
+means<-colMeans(biomass_simulated_p6, na.rm = T)
 sds<-colSdApply(biomass_simulated_p6)
 plotrange=c(0, max(c(means,calib_data$biom6)))
 plot(calib_data$biom6, means, ylim=plotrange, xlim=plotrange, col=times_palette[6], pch=as.numeric(as.factor(round(calib_data$time2/10)*10)), main=class_names[6], ylab=expression(paste("Predicted, Biomass, g m"^"-2")), xlab=expression(paste("Measured, Biomass, g m"^"-2")))
@@ -631,7 +633,7 @@ dev.off()
 #plotting the biomass simulation together with the data
 png("Scatter_plot_with_IDS_variablemu_with_treatments.png", width=4000, height=2500, res=390)
 par(mfrow=c(2,3), mar=c(5,5,2,2))
-means<-colMeans(biomass_simulated_p1)
+means<-colMeans(biomass_simulated_p1, na.rm = T)
 sds<-colSdApply(biomass_simulated_p1)
 plot(calib_data$biom1, means, ylim=plotrange, xlim=plotrange, col=times_palette[1], main=class_names[1], pch=as.numeric(as.factor(round(calib_data$time1/10)*10)), ylab=expression(paste("Predicted, Biomass, g m"^"-2")), xlab=expression(paste("Measured, Biomass, g m"^"-2")))
 #arrows(calib_data$biom1, means-sds, calib_data$biom1, means+sds, length=0.03, angle=90, code=3, col=times_palette_alpha[1])
@@ -639,7 +641,7 @@ text(calib_data$biom1, means+.5, ID1, cex=0.5)
 legend("topright","(a)", bty="n")
 legend("topleft", levels(as.factor(round(calib_data$time1/10)*10)), pch=1:5,cex=1.2, bty="n")
 
-means<-colMeans(biomass_simulated_p2)
+means<-colMeans(biomass_simulated_p2, na.rm = T)
 sds<-colSdApply(biomass_simulated_p2)
 plotrange=c(0, max(c(means,calib_data$biom2)))
 plot(calib_data$biom2, means, ylim=plotrange, xlim=plotrange, col=times_palette[2], pch=as.numeric(as.factor(round(calib_data$time2/10)*10)), main=class_names[2], ylab=expression(paste("Predicted, Biomass, g m"^"-2")), xlab=expression(paste("Measured, Biomass, g m"^"-2")))
@@ -647,7 +649,7 @@ plot(calib_data$biom2, means, ylim=plotrange, xlim=plotrange, col=times_palette[
 legend("topright","(b)", bty="n")
 text(calib_data$biom2, means+.5, ID2, cex=0.5)
 
-means<-colMeans(biomass_simulated_p3)
+means<-colMeans(biomass_simulated_p3, na.rm = T)
 sds<-colSdApply(biomass_simulated_p3)
 plotrange=c(0, max(c(means,calib_data$biom3)))
 plot(calib_data$biom3, means, ylim=plotrange, xlim=plotrange, col=times_palette[3], pch=as.numeric(as.factor(round(calib_data$time2/10)*10)), main=class_names[3], ylab=expression(paste("Predicted, Biomass, g m"^"-2")), xlab=expression(paste("Measured, Biomass, g m"^"-2")))
@@ -655,7 +657,7 @@ plot(calib_data$biom3, means, ylim=plotrange, xlim=plotrange, col=times_palette[
 legend("topright","(c)", bty="n")
 text(calib_data$biom3, means+.5, ID3, cex=0.5)
 
-means<-colMeans(biomass_simulated_p4)
+means<-colMeans(biomass_simulated_p4, na.rm = T)
 sds<-colSdApply(biomass_simulated_p4)
 plotrange=c(0, max(c(means,calib_data$biom4)))
 plot(calib_data$biom4, means, ylim=plotrange, xlim=plotrange, col=times_palette[4], pch=as.numeric(as.factor(round(calib_data$time2/10)*10)), main=class_names[4], ylab=expression(paste("Predicted, Biomass, g m"^"-2")), xlab=expression(paste("Measured, Biomass, g m"^"-2")))
@@ -663,7 +665,7 @@ plot(calib_data$biom4, means, ylim=plotrange, xlim=plotrange, col=times_palette[
 legend("topright","(d)", bty="n")
 text(calib_data$biom4, means+.5, ID4, cex=0.5)
 
-means<-colMeans(biomass_simulated_p5)
+means<-colMeans(biomass_simulated_p5, na.rm = T)
 sds<-colSdApply(biomass_simulated_p5)
 plotrange=c(0, max(c(means,calib_data$biom5)))
 plot(calib_data$biom5, means, ylim=plotrange, xlim=plotrange, col=times_palette[5], pch=as.numeric(as.factor(round(calib_data$time3/10)*10)), main=class_names[5], ylab=expression(paste("Predicted, Biomass, g m"^"-2")), xlab=expression(paste("Measured, Biomass, g m"^"-2")))
@@ -671,7 +673,7 @@ plot(calib_data$biom5, means, ylim=plotrange, xlim=plotrange, col=times_palette[
 legend("topright","(e)", bty="n")
 text(calib_data$biom5, means+.5, ID5, cex=0.5)
 
-means<-colMeans(biomass_simulated_p6)
+means<-colMeans(biomass_simulated_p6, na.rm = T)
 sds<-colSdApply(biomass_simulated_p6)
 plotrange=c(0, max(c(means,calib_data$biom6)))
 plot(calib_data$biom6, means, ylim=plotrange, xlim=plotrange, col=times_palette[6], pch=as.numeric(as.factor(round(calib_data$time2/10)*10)), main=class_names[6], ylab=expression(paste("Predicted, Biomass, g m"^"-2")), xlab=expression(paste("Measured, Biomass, g m"^"-2")))
@@ -701,6 +703,67 @@ boxplot(RMSE_tab, col=times_palette_alpha, names = class_names, las=2, ylab=expr
 dev.off()
 
 
+
+
+
+
+res1<-as.data.frame(t(rbind(calib_data$start1+182, calib_data$time1+182,res_simulated_p1)))
+res2<-as.data.frame(t(rbind(calib_data$start2+182, calib_data$time2+182,res_simulated_p2)))
+res3<-as.data.frame(t(rbind(calib_data$start3+182, calib_data$time3+182,res_simulated_p3)))
+res4<-as.data.frame(t(rbind(calib_data$start4+182, calib_data$time4+182,res_simulated_p4)))
+res5<-as.data.frame(t(rbind(calib_data$start5+182, calib_data$time5+182,res_simulated_p5)))
+res6<-as.data.frame(t(rbind(calib_data$start6+182, calib_data$time6+182,res_simulated_p6)))
+
+colnames(res1)[1:2]<-c("start", "end")
+colnames(res2)[1:2]<-c("start", "end")
+colnames(res3)[1:2]<-c("start", "end")
+colnames(res4)[1:2]<-c("start", "end")
+colnames(res5)[1:2]<-c("start", "end")
+colnames(res6)[1:2]<-c("start", "end")
+
+# write_ods(res1, "residuals.ods", sheet="treat1")
+# write_ods(res2, "residuals.ods", sheet="treat2", append=T)
+# write_ods(res3, "residuals.ods", sheet="treat3", append=T)
+# write_ods(res4, "residuals.ods", sheet="treat4", append=T)
+# write_ods(res5, "residuals.ods", sheet="treat5", append=T)
+# write_ods(res6, "residuals.ods", sheet="treat6", append=T)
+
+
+
+sim1<-as.data.frame(t(rbind(calib_data$start1+182, calib_data$time1+182,biomass_simulated_p1)))
+sim2<-as.data.frame(t(rbind(calib_data$start2+182, calib_data$time2+182,biomass_simulated_p2)))
+sim3<-as.data.frame(t(rbind(calib_data$start3+182, calib_data$time3+182,biomass_simulated_p3)))
+sim4<-as.data.frame(t(rbind(calib_data$start4+182, calib_data$time4+182,biomass_simulated_p4)))
+sim5<-as.data.frame(t(rbind(calib_data$start5+182, calib_data$time5+182,biomass_simulated_p5)))
+sim6<-as.data.frame(t(rbind(calib_data$start6+182, calib_data$time6+182,biomass_simulated_p6)))
+
+colnames(sim1)[1:2]<-c("start", "end")
+colnames(sim2)[1:2]<-c("start", "end")
+colnames(sim3)[1:2]<-c("start", "end")
+colnames(sim4)[1:2]<-c("start", "end")
+colnames(sim5)[1:2]<-c("start", "end")
+colnames(sim6)[1:2]<-c("start", "end")
+
+# write_ods(sim1, "predicted.ods", sheet="treat1")
+# write_ods(sim2, "predicted.ods", sheet="treat2", append=T)
+# write_ods(sim3, "predicted.ods", sheet="treat3", append=T)
+# write_ods(sim4, "predicted.ods", sheet="treat4", append=T)
+# write_ods(sim5, "predicted.ods", sheet="treat5", append=T)
+# write_ods(sim6, "predicted.ods", sheet="treat6", append=T)
+
+
+
+png("simulated_vs_residuals.png", width = 3500, height = 2500, res=300)
+par(mfrow=c(2,3))
+plot(rowMeans(biomass_simulated_p1), rowMeans(res_simulated_p1), xlab="Simulated", ylab="Residuals", main=class_names[1])
+plot(rowMeans(biomass_simulated_p2), rowMeans(res_simulated_p2), xlab="Simulated", ylab="Residuals", main=class_names[2])
+plot(rowMeans(biomass_simulated_p3), rowMeans(res_simulated_p3), xlab="Simulated", ylab="Residuals", main=class_names[3])
+plot(rowMeans(biomass_simulated_p4), rowMeans(res_simulated_p4), xlab="Simulated", ylab="Residuals", main=class_names[4])
+plot(rowMeans(biomass_simulated_p5), rowMeans(res_simulated_p5), xlab="Simulated", ylab="Residuals", main=class_names[5])
+plot(rowMeans(biomass_simulated_p6), rowMeans(res_simulated_p6), xlab="Simulated", ylab="Residuals", main=class_names[6])
+dev.off()
+
+
 # plotting mean absolute error per time point
 dataframe_MAE_p1<-as.data.frame(t(rbind(calib_data$time1,res_simulated_p1)))
 dataframe_MAE_p2<-as.data.frame(t(rbind(calib_data$time2,res_simulated_p2)))
@@ -716,6 +779,7 @@ colnames(dataframe_MAE_p4)[1]<-"time"
 colnames(dataframe_MAE_p5)[1]<-"time"
 colnames(dataframe_MAE_p6)[1]<-"time"
 
+
 dataframe_MAE_p1_mean<-(aggregate(dataframe_MAE_p1, list(dataframe_MAE_p1$time), mean))[,-c(1,2)]
 dataframe_MAE_p2_mean<-(aggregate(dataframe_MAE_p2, list(dataframe_MAE_p2$time), mean))[,-c(1,2)]
 dataframe_MAE_p3_mean<-(aggregate(dataframe_MAE_p3, list(dataframe_MAE_p3$time), mean))[,-c(1,2)]
@@ -723,16 +787,53 @@ dataframe_MAE_p4_mean<-(aggregate(dataframe_MAE_p4, list(dataframe_MAE_p4$time),
 dataframe_MAE_p5_mean<-(aggregate(dataframe_MAE_p5, list(dataframe_MAE_p5$time), mean))[,-c(1,2)]
 dataframe_MAE_p6_mean<-(aggregate(dataframe_MAE_p6, list(dataframe_MAE_p6$time), mean))[,-c(1,2)]
 
-png("Boxplot_MAE_variablemu_with_treatments.png", width=4000, height=2000, res=350)
+png("Boxplot_MAE_end_variablemu_with_treatments.png", width=4000, height=2000, res=350)
 MAE_range<-range(c(dataframe_MAE_p1_mean,dataframe_MAE_p2_mean, dataframe_MAE_p3_mean, dataframe_MAE_p4_mean, dataframe_MAE_p5_mean, dataframe_MAE_p6_mean))
 par(mfrow=c(2,3), mar=c(5,5,2,2))
-boxplot(t(dataframe_MAE_p1_mean), names=unique(calib_data$time1), ylab=expression(paste("MAE, g m"^"-2")), xlab="Day of the year", col=times_palette_alpha[1], main=class_names[1], ylim=MAE_range)
-boxplot(t(dataframe_MAE_p2_mean), names=unique(calib_data$time1), ylab=expression(paste("MAE, g m"^"-2")), xlab="Day of the year", col=times_palette_alpha[2], main=class_names[2], ylim=MAE_range)
-boxplot(t(dataframe_MAE_p3_mean), names=unique(calib_data$time1), ylab=expression(paste("MAE, g m"^"-2")), xlab="Day of the year", col=times_palette_alpha[3], main=class_names[3], ylim=MAE_range)
-boxplot(t(dataframe_MAE_p4_mean), names=unique(calib_data$time1), ylab=expression(paste("MAE, g m"^"-2")), xlab="Day of the year", col=times_palette_alpha[4], main=class_names[4], ylim=MAE_range)
-boxplot(t(dataframe_MAE_p5_mean), names=unique(calib_data$time1), ylab=expression(paste("MAE, g m"^"-2")), xlab="Day of the year", col=times_palette_alpha[5], main=class_names[5], ylim=MAE_range)
-boxplot(t(dataframe_MAE_p6_mean), names=unique(calib_data$time1), ylab=expression(paste("MAE, g m"^"-2")), xlab="Day of the year", col=times_palette_alpha[6], main=class_names[6], ylim=MAE_range)
+boxplot(t(dataframe_MAE_p1_mean), names=unique(calib_data$time1+182), ylab=expression(paste("MAE, g m"^"-2")), xlab="Julian day end", col=times_palette_alpha[1], main=class_names[1], ylim=MAE_range)
+boxplot(t(dataframe_MAE_p2_mean), names=unique(calib_data$time2+182), ylab=expression(paste("MAE, g m"^"-2")), xlab="Julian day end", col=times_palette_alpha[2], main=class_names[2], ylim=MAE_range)
+boxplot(t(dataframe_MAE_p3_mean), names=unique(calib_data$time3+182), ylab=expression(paste("MAE, g m"^"-2")), xlab="Julian day end", col=times_palette_alpha[3], main=class_names[3], ylim=MAE_range)
+boxplot(t(dataframe_MAE_p4_mean), names=unique(calib_data$time4+182), ylab=expression(paste("MAE, g m"^"-2")), xlab="Julian day end", col=times_palette_alpha[4], main=class_names[4], ylim=MAE_range)
+boxplot(t(dataframe_MAE_p5_mean), names=unique(calib_data$time5+182), ylab=expression(paste("MAE, g m"^"-2")), xlab="Julian day end", col=times_palette_alpha[5], main=class_names[5], ylim=MAE_range)
+boxplot(t(dataframe_MAE_p6_mean), names=unique(calib_data$time6+182), ylab=expression(paste("MAE, g m"^"-2")), xlab="Julian day end", col=times_palette_alpha[6], main=class_names[6], ylim=MAE_range)
 dev.off()
+
+
+# plotting mean absolute error per time point
+dataframe_MAE_p1<-as.data.frame(t(rbind(calib_data$start1,res_simulated_p1)))
+dataframe_MAE_p2<-as.data.frame(t(rbind(calib_data$start2,res_simulated_p2)))
+dataframe_MAE_p3<-as.data.frame(t(rbind(calib_data$start3,res_simulated_p3)))
+dataframe_MAE_p4<-as.data.frame(t(rbind(calib_data$start4,res_simulated_p4)))
+dataframe_MAE_p5<-as.data.frame(t(rbind(calib_data$start5,res_simulated_p5)))
+dataframe_MAE_p6<-as.data.frame(t(rbind(calib_data$start6,res_simulated_p6)))
+
+colnames(dataframe_MAE_p1)[1]<-"time"
+colnames(dataframe_MAE_p2)[1]<-"time"
+colnames(dataframe_MAE_p3)[1]<-"time"
+colnames(dataframe_MAE_p4)[1]<-"time"
+colnames(dataframe_MAE_p5)[1]<-"time"
+colnames(dataframe_MAE_p6)[1]<-"time"
+
+
+dataframe_MAE_p1_mean<-(aggregate(dataframe_MAE_p1, list(dataframe_MAE_p1$time), mean))[,-c(1,2)]
+dataframe_MAE_p2_mean<-(aggregate(dataframe_MAE_p2, list(dataframe_MAE_p2$time), mean))[,-c(1,2)]
+dataframe_MAE_p3_mean<-(aggregate(dataframe_MAE_p3, list(dataframe_MAE_p3$time), mean))[,-c(1,2)]
+dataframe_MAE_p4_mean<-(aggregate(dataframe_MAE_p4, list(dataframe_MAE_p4$time), mean))[,-c(1,2)]
+dataframe_MAE_p5_mean<-(aggregate(dataframe_MAE_p5, list(dataframe_MAE_p5$time), mean))[,-c(1,2)]
+dataframe_MAE_p6_mean<-(aggregate(dataframe_MAE_p6, list(dataframe_MAE_p6$time), mean))[,-c(1,2)]
+
+png("Boxplot_MAE_start_variablemu_with_treatments.png", width=4000, height=2000, res=350)
+MAE_range<-range(c(dataframe_MAE_p1_mean,dataframe_MAE_p2_mean, dataframe_MAE_p3_mean, dataframe_MAE_p4_mean, dataframe_MAE_p5_mean, dataframe_MAE_p6_mean))
+par(mfrow=c(2,3), mar=c(5,5,2,2))
+boxplot(t(dataframe_MAE_p1_mean), names=unique(calib_data$time1+182), ylab=expression(paste("MAE, g m"^"-2")), xlab="Julian day end", col=times_palette_alpha[1], main=class_names[1], ylim=MAE_range)
+boxplot(t(dataframe_MAE_p2_mean), names=unique(calib_data$time2+182), ylab=expression(paste("MAE, g m"^"-2")), xlab="Julian day end", col=times_palette_alpha[2], main=class_names[2], ylim=MAE_range)
+boxplot(t(dataframe_MAE_p3_mean), names=unique(calib_data$time3+182), ylab=expression(paste("MAE, g m"^"-2")), xlab="Julian day end", col=times_palette_alpha[3], main=class_names[3], ylim=MAE_range)
+boxplot(t(dataframe_MAE_p4_mean), names=unique(calib_data$time4+182), ylab=expression(paste("MAE, g m"^"-2")), xlab="Julian day end", col=times_palette_alpha[4], main=class_names[4], ylim=MAE_range)
+boxplot(t(dataframe_MAE_p5_mean), names=unique(calib_data$time5+182), ylab=expression(paste("MAE, g m"^"-2")), xlab="Julian day end", col=times_palette_alpha[5], main=class_names[5], ylim=MAE_range)
+boxplot(t(dataframe_MAE_p6_mean), names=unique(calib_data$time6+182), ylab=expression(paste("MAE, g m"^"-2")), xlab="Julian day end", col=times_palette_alpha[6], main=class_names[6], ylim=MAE_range)
+dev.off()
+
+
 
 
 
@@ -761,12 +862,12 @@ dataframe_CV_p6_mean<-(aggregate(dataframe_CV_p6, list(dataframe_CV_p6$time), me
 png("Boxplot_CV_variablemu_with_treatments.png", width=4000, height=2000, res=350)
 CV_range<-range(unlist(c(dataframe_CV_p1_mean,dataframe_CV_p2_mean, dataframe_CV_p3_mean, dataframe_CV_p4_mean, dataframe_CV_p5_mean, dataframe_CV_p6_mean))*100)
 par(mfrow=c(2,3), mar=c(5,5,2,2))
-boxplot(t(dataframe_CV_p1_mean)*100, names=unique(calib_data$time1), ylab="Coefficient of variation, %", xlab="Day of the year", col=times_palette_alpha[1], main=class_names[1], ylim=CV_range)
-boxplot(t(dataframe_CV_p2_mean)*100, names=unique(calib_data$time1), ylab="Coefficient of variation, %", xlab="Day of the year", col=times_palette_alpha[2], main=class_names[2], ylim=CV_range)
-boxplot(t(dataframe_CV_p3_mean)*100, names=unique(calib_data$time1), ylab="Coefficient of variation, %", xlab="Day of the year", col=times_palette_alpha[3], main=class_names[3], ylim=CV_range)
-boxplot(t(dataframe_CV_p4_mean)*100, names=unique(calib_data$time1), ylab="Coefficient of variation, %", xlab="Day of the year", col=times_palette_alpha[4], main=class_names[4], ylim=CV_range)
-boxplot(t(dataframe_CV_p5_mean)*100, names=unique(calib_data$time1), ylab="Coefficient of variation, %", xlab="Day of the year", col=times_palette_alpha[5], main=class_names[5], ylim=CV_range)
-boxplot(t(dataframe_CV_p6_mean)*100, names=unique(calib_data$time1), ylab="Coefficient of variation, %", xlab="Day of the year", col=times_palette_alpha[6], main=class_names[6], ylim=CV_range)
+boxplot(t(dataframe_CV_p1_mean)*100, names=unique(calib_data$time1+182), ylab="Coefficient of variation, %", xlab="Julian day", col=times_palette_alpha[1], main=class_names[1], ylim=CV_range)
+boxplot(t(dataframe_CV_p2_mean)*100, names=unique(calib_data$time2+182), ylab="Coefficient of variation, %", xlab="Julian day", col=times_palette_alpha[2], main=class_names[2], ylim=CV_range)
+boxplot(t(dataframe_CV_p3_mean)*100, names=unique(calib_data$time3+182), ylab="Coefficient of variation, %", xlab="Julian day", col=times_palette_alpha[3], main=class_names[3], ylim=CV_range)
+boxplot(t(dataframe_CV_p4_mean)*100, names=unique(calib_data$time4+182), ylab="Coefficient of variation, %", xlab="Julian day", col=times_palette_alpha[4], main=class_names[4], ylim=CV_range)
+boxplot(t(dataframe_CV_p5_mean)*100, names=unique(calib_data$time5+182), ylab="Coefficient of variation, %", xlab="Julian day", col=times_palette_alpha[5], main=class_names[5], ylim=CV_range)
+boxplot(t(dataframe_CV_p6_mean)*100, names=unique(calib_data$time6+182), ylab="Coefficient of variation, %", xlab="Julian day", col=times_palette_alpha[6], main=class_names[6], ylim=CV_range)
 dev.off()
 
 

@@ -103,24 +103,24 @@ model { //this block runs the model and the MCMC sampling
         a1= z*tree1[i]; // calculating a
         if(period1[i]==1)
         biomass1[i]= (p1)/mu1*(1-exp(-mu1*(time1[i]-start1[i])))+
-                    ((a1*p1)/mu1)*(cos(om*time1[i])-exp(-mu1*(time1[i]-start1[i]))*cos(om)*start1[i])-
-                     ((a1*p1)/(om*mu1))*(1/(1+(1/(om^2*mu1^2))))*((1/mu1)*(sin(om)*time1[i]-exp(-mu1*(time1[i]-start1[i]))*sin(om)*start1[i])+
-                     (1/(om*mu1^2))*(cos(om*time1[i])-exp(-mu1*(time1[i]-start1[i]))*cos(om)*start1[i]));
+                    ((a1*p1)/mu1)*(cos(om*time1[i])-exp(-mu1*(time1[i]-start1[i]))*cos(om*start1[i]))-
+                     ((a1*p1)/(om*mu1))*(1/(1+(1/(om^2*mu1^2))))*((1/mu1)*(sin(om*time1[i])-exp(-mu1*(time1[i]-start1[i]))*sin(om*start1[i]))+
+                     (1/(om*mu1^2))*(cos(om*time1[i])-exp(-mu1*(time1[i]-start1[i]))*cos(om*start1[i])));
         else if(period1[i]==2)
         biomass1[i]= (p1)/mu1*(1-exp(-mu1*(time1[i]-start1[i])))+
-                    ((a1*p1)/mu1)*(cos(om*time1[i])-exp(-mu1*(time1[i]-start1[i]))*cos(om)*start1[i])-
-                     ((a1*p1)/(om*mu1))*(1/(1+(1/(om^2*mu1^2))))*((1/mu1)*(sin(om)*time1[i]-exp(-mu1*(time1[i]-start1[i]))*sin(om)*start1[i])+
-                     (1/(om*mu1^2))*(cos(om*time1[i])-exp(-mu1*(time1[i]-start1[i]))*cos(om)*start1[i]));
+                    ((a1*p1)/mu1)*(cos(om*time1[i])-exp(-mu1*(time1[i]-start1[i]))*cos(om*start1[i]))-
+                     ((a1*p1)/(om*mu1))*(1/(1+(1/(om^2*mu1^2))))*((1/mu1)*(sin(om*time1[i])-exp(-mu1*(time1[i]-start1[i]))*sin(om*start1[i]))+
+                     (1/(om*mu1^2))*(cos(om*time1[i])-exp(-mu1*(time1[i]-start1[i]))*cos(om*start1[i])));
         else if(period1[i]==3)
             biomass1[i]=( p1)/mu1*(1-exp(-mu1*(time1[i]-start1[i])))+
-                        ((a1*p1)/mu1)*(cos(om*time1[i])-exp(-mu1*(time1[i]-start1[i]))*cos(om)*start1[i])-
-                         ((a1*p1)/(om*mu1))*(1/(1+(1/(om^2*mu1^2))))*((1/mu1)*(sin(om)*time1[i]-exp(-mu1*(time1[i]-start1[i]))*sin(om)*start1[i])+
-                         (1/(om*mu1^2))*(cos(om*time1[i])-exp(-mu1*(time1[i]-start1[i]))*cos(om)*start1[i]));
+                        ((a1*p1)/mu1)*(cos(om*time1[i])-exp(-mu1*(time1[i]-start1[i]))*cos(om*start1[i]))-
+                         ((a1*p1)/(om*mu1))*(1/(1+(1/(om^2*mu1^2))))*((1/mu1)*(sin(om*time1[i])-exp(-mu1*(time1[i]-start1[i]))*sin(om*start1[i]))+
+                         (1/(om*mu1^2))*(cos(om*time1[i])-exp(-mu1*(time1[i]-start1[i]))*cos(om*start1[i])));
         else if(period1[i]==4)
             biomass1[i]= (p1)/mu1*(1-exp(-mu1*(time1[i]-start1[i])))+
-                        ((a1*p1)/mu1)*(cos(om*time1[i])-exp(-mu1*(time1[i]-start1[i]))*cos(om)*start1[i])-
-                         ((a1*p1)/(om*mu1))*(1/(1+(1/(om^2*mu1^2))))*((1/mu1)*(sin(om)*time1[i]-exp(-mu1*(time1[i]-start1[i]))*sin(om)*start1[i])+
-                         (1/(om*mu1^2))*(cos(om*time1[i])-exp(-mu1*(time1[i]-start1[i]))*cos(om)*start1[i]));
+                        ((a1*p1)/mu1)*(cos(om*time1[i])-exp(-mu1*(time1[i]-start1[i]))*cos(om*start1[i]))-
+                         ((a1*p1)/(om*mu1))*(1/(1+(1/(om^2*mu1^2))))*((1/mu1)*(sin(om*time1[i])-exp(-mu1*(time1[i]-start1[i]))*sin(om*start1[i]))+
+                         (1/(om*mu1^2))*(cos(om*time1[i])-exp(-mu1*(time1[i]-start1[i]))*cos(om*start1[i])));
          biom1[i] ~ normal(biomass1[i], // this line compares the simulation with the results
                            max_sd1); //the sigma is the standard deviation in the data
 
@@ -129,24 +129,24 @@ model { //this block runs the model and the MCMC sampling
         a2= z*tree2[i]; // calculating a
         if(period2[i]==1)
         biomass2[i]= (p2)/mu2*(1-exp(-mu2*(time2[i]-start2[i])))+
-                    ((a2*p2)/mu2)*(cos(om*time2[i])-exp(-mu2*(time2[i]-start2[i]))*cos(om)*start2[i])-
-                     ((a2*p2)/(om*mu2))*(1/(1+(1/(om^2*mu2^2))))*((1/mu2)*(sin(om)*time2[i]-exp(-mu2*(time2[i]-start2[i]))*sin(om)*start2[i])+
-                     (1/(om*mu2^2))*(cos(om*time2[i])-exp(-mu2*(time2[i]-start2[i]))*cos(om)*start2[i]));
+                    ((a2*p2)/mu2)*(cos(om*time2[i])-exp(-mu2*(time2[i]-start2[i]))*cos(om*start2[i]))-
+                     ((a2*p2)/(om*mu2))*(1/(1+(1/(om^2*mu2^2))))*((1/mu2)*(sin(om*time2[i])-exp(-mu2*(time2[i]-start2[i]))*sin(om*start2[i]))+
+                     (1/(om*mu2^2))*(cos(om*time2[i])-exp(-mu2*(time2[i]-start2[i]))*cos(om*start2[i])));
         else if(period2[i]==2)
         biomass2[i]= (p2)/mu2*(1-exp(-mu2*(time2[i]-start2[i])))+
-                    ((a2*p2)/mu2)*(cos(om*time2[i])-exp(-mu2*(time2[i]-start2[i]))*cos(om)*start2[i])-
-                     ((a2*p2)/(om*mu2))*(1/(1+(1/(om^2*mu2^2))))*((1/mu2)*(sin(om)*time2[i]-exp(-mu2*(time2[i]-start2[i]))*sin(om)*start2[i])+
-                     (1/(om*mu2^2))*(cos(om*time2[i])-exp(-mu2*(time2[i]-start2[i]))*cos(om)*start2[i]));
+                    ((a2*p2)/mu2)*(cos(om*time2[i])-exp(-mu2*(time2[i]-start2[i]))*cos(om*start2[i]))-
+                     ((a2*p2)/(om*mu2))*(1/(1+(1/(om^2*mu2^2))))*((1/mu2)*(sin(om*time2[i])-exp(-mu2*(time2[i]-start2[i]))*sin(om*start2[i]))+
+                     (1/(om*mu2^2))*(cos(om*time2[i])-exp(-mu2*(time2[i]-start2[i]))*cos(om*start2[i])));
         else if(period2[i]==3)
         biomass2[i]= (p2)/mu2*(1-exp(-mu2*(time2[i]-start2[i])))+
-                    ((a2*p2)/mu2)*(cos(om*time2[i])-exp(-mu2*(time2[i]-start2[i]))*cos(om)*start2[i])-
-                     ((a2*p2)/(om*mu2))*(1/(1+(1/(om^2*mu2^2))))*((1/mu2)*(sin(om)*time2[i]-exp(-mu2*(time2[i]-start2[i]))*sin(om)*start2[i])+
-                     (1/(om*mu2^2))*(cos(om*time2[i])-exp(-mu2*(time2[i]-start2[i]))*cos(om)*start2[i]));
+                    ((a2*p2)/mu2)*(cos(om*time2[i])-exp(-mu2*(time2[i]-start2[i]))*cos(om*start2[i]))-
+                     ((a2*p2)/(om*mu2))*(1/(1+(1/(om^2*mu2^2))))*((1/mu2)*(sin(om*time2[i])-exp(-mu2*(time2[i]-start2[i]))*sin(om*start2[i]))+
+                     (1/(om*mu2^2))*(cos(om*time2[i])-exp(-mu2*(time2[i]-start2[i]))*cos(om*start2[i])));
         else if(period2[i]==4)
         biomass2[i]= (p2)/mu2*(1-exp(-mu2*(time2[i]-start2[i])))+
-                    ((a2*p2)/mu2)*(cos(om*time2[i])-exp(-mu2*(time2[i]-start2[i]))*cos(om)*start2[i])-
-                     ((a2*p2)/(om*mu2))*(1/(1+(1/(om^2*mu2^2))))*((1/mu2)*(sin(om)*time2[i]-exp(-mu2*(time2[i]-start2[i]))*sin(om)*start2[i])+
-                     (1/(om*mu2^2))*(cos(om*time2[i])-exp(-mu2*(time2[i]-start2[i]))*cos(om)*start2[i]));
+                    ((a2*p2)/mu2)*(cos(om*time2[i])-exp(-mu2*(time2[i]-start2[i]))*cos(om*start2[i]))-
+                     ((a2*p2)/(om*mu2))*(1/(1+(1/(om^2*mu2^2))))*((1/mu2)*(sin(om*time2[i])-exp(-mu2*(time2[i]-start2[i]))*sin(om*start2[i]))+
+                     (1/(om*mu2^2))*(cos(om*time2[i])-exp(-mu2*(time2[i]-start2[i]))*cos(om*start2[i])));
 
         biom2[i] ~ normal(biomass2[i], // this line compares the simulation with the results
                            max_sd2); //the sigma is the standard deviation in the data
@@ -156,24 +156,24 @@ model { //this block runs the model and the MCMC sampling
         a3= z*tree3[i]; // calculating a
         if(period3[i]==1)
         biomass3[i]= (p3)/mu3*(1-exp(-mu3*(time3[i]-start3[i])))+
-                    ((a3*p3)/mu3)*(cos(om*time3[i])-exp(-mu3*(time3[i]-start3[i]))*cos(om)*start3[i])-
-                     ((a3*p3)/(om*mu3))*(1/(1+(1/(om^2*mu3^2))))*((1/mu3)*(sin(om)*time3[i]-exp(-mu3*(time3[i]-start3[i]))*sin(om)*start3[i])+
-                     (1/(om*mu3^2))*(cos(om*time3[i])-exp(-mu3*(time3[i]-start3[i]))*cos(om)*start3[i]));
+                    ((a3*p3)/mu3)*(cos(om*time3[i])-exp(-mu3*(time3[i]-start3[i]))*cos(om*start3[i]))-
+                     ((a3*p3)/(om*mu3))*(1/(1+(1/(om^2*mu3^2))))*((1/mu3)*(sin(om*time3[i])-exp(-mu3*(time3[i]-start3[i]))*sin(om*start3[i]))+
+                     (1/(om*mu3^2))*(cos(om*time3[i])-exp(-mu3*(time3[i]-start3[i]))*cos(om*start3[i])));
         else if(period3[i]==2)
         biomass3[i]= (p3)/mu3*(1-exp(-mu3*(time3[i]-start3[i])))+
-                    ((a3*p3)/mu3)*(cos(om*time3[i])-exp(-mu3*(time3[i]-start3[i]))*cos(om)*start3[i])-
-                     ((a3*p3)/(om*mu3))*(1/(1+(1/(om^2*mu3^2))))*((1/mu3)*(sin(om)*time3[i]-exp(-mu3*(time3[i]-start3[i]))*sin(om)*start3[i])+
-                     (1/(om*mu3^2))*(cos(om*time3[i])-exp(-mu3*(time3[i]-start3[i]))*cos(om)*start3[i]));
+                    ((a3*p3)/mu3)*(cos(om*time3[i])-exp(-mu3*(time3[i]-start3[i]))*cos(om*start3[i]))-
+                     ((a3*p3)/(om*mu3))*(1/(1+(1/(om^2*mu3^2))))*((1/mu3)*(sin(om*time3[i])-exp(-mu3*(time3[i]-start3[i]))*sin(om*start3[i]))+
+                     (1/(om*mu3^2))*(cos(om*time3[i])-exp(-mu3*(time3[i]-start3[i]))*cos(om*start3[i])));
         else if(period3[i]==3)
         biomass3[i]= (p3)/mu3*(1-exp(-mu3*(time3[i]-start3[i])))+
-                    ((a3*p3)/mu3)*(cos(om*time3[i])-exp(-mu3*(time3[i]-start3[i]))*cos(om)*start3[i])-
-                     ((a3*p3)/(om*mu3))*(1/(1+(1/(om^2*mu3^2))))*((1/mu3)*(sin(om)*time3[i]-exp(-mu3*(time3[i]-start3[i]))*sin(om)*start3[i])+
-                     (1/(om*mu3^2))*(cos(om*time3[i])-exp(-mu3*(time3[i]-start3[i]))*cos(om)*start3[i]));
+                    ((a3*p3)/mu3)*(cos(om*time3[i])-exp(-mu3*(time3[i]-start3[i]))*cos(om*start3[i]))-
+                     ((a3*p3)/(om*mu3))*(1/(1+(1/(om^2*mu3^2))))*((1/mu3)*(sin(om*time3[i])-exp(-mu3*(time3[i]-start3[i]))*sin(om*start3[i]))+
+                     (1/(om*mu3^2))*(cos(om*time3[i])-exp(-mu3*(time3[i]-start3[i]))*cos(om*start3[i])));
         else if(period3[i]==4)
         biomass3[i]= (p3)/mu3*(1-exp(-mu3*(time3[i]-start3[i])))+
-                    ((a3*p3)/mu3)*(cos(om*time3[i])-exp(-mu3*(time3[i]-start3[i]))*cos(om)*start3[i])-
-                     ((a3*p3)/(om*mu3))*(1/(1+(1/(om^2*mu3^2))))*((1/mu3)*(sin(om)*time3[i]-exp(-mu3*(time3[i]-start3[i]))*sin(om)*start3[i])+
-                     (1/(om*mu3^2))*(cos(om*time3[i])-exp(-mu3*(time3[i]-start3[i]))*cos(om)*start3[i]));
+                    ((a3*p3)/mu3)*(cos(om*time3[i])-exp(-mu3*(time3[i]-start3[i]))*cos(om*start3[i]))-
+                     ((a3*p3)/(om*mu3))*(1/(1+(1/(om^2*mu3^2))))*((1/mu3)*(sin(om*time3[i])-exp(-mu3*(time3[i]-start3[i]))*sin(om*start3[i]))+
+                     (1/(om*mu3^2))*(cos(om*time3[i])-exp(-mu3*(time3[i]-start3[i]))*cos(om*start3[i])));
 
         biom3[i] ~ normal(biomass3[i], // this line compares the simulation with the results
                            max_sd3); //the sigma is the standard deviation in the data
@@ -183,24 +183,24 @@ model { //this block runs the model and the MCMC sampling
         a4= z*tree4[i]; // calculating a
         if(period4[i]==1)
         biomass4[i]= (p4)/mu4*(1-exp(-mu4*(time4[i]-start4[i])))+
-                    ((a4*p4)/mu4)*(cos(om*time4[i])-exp(-mu4*(time4[i]-start4[i]))*cos(om)*start4[i])-
-                     ((a4*p4)/(om*mu4))*(1/(1+(1/(om^2*mu4^2))))*((1/mu4)*(sin(om)*time4[i]-exp(-mu4*(time4[i]-start4[i]))*sin(om)*start4[i])+
-                     (1/(om*mu4^2))*(cos(om*time4[i])-exp(-mu4*(time4[i]-start4[i]))*cos(om)*start4[i]));
+                    ((a4*p4)/mu4)*(cos(om*time4[i])-exp(-mu4*(time4[i]-start4[i]))*cos(om*start4[i]))-
+                     ((a4*p4)/(om*mu4))*(1/(1+(1/(om^2*mu4^2))))*((1/mu4)*(sin(om*time4[i])-exp(-mu4*(time4[i]-start4[i]))*sin(om*start4[i]))+
+                     (1/(om*mu4^2))*(cos(om*time4[i])-exp(-mu4*(time4[i]-start4[i]))*cos(om*start4[i])));
         else if(period4[i]==2)
         biomass4[i]= (p4)/mu4*(1-exp(-mu4*(time4[i]-start4[i])))+
-                    ((a4*p4)/mu4)*(cos(om*time4[i])-exp(-mu4*(time4[i]-start4[i]))*cos(om)*start4[i])-
-                     ((a4*p4)/(om*mu4))*(1/(1+(1/(om^2*mu4^2))))*((1/mu4)*(sin(om)*time4[i]-exp(-mu4*(time4[i]-start4[i]))*sin(om)*start4[i])+
-                     (1/(om*mu4^2))*(cos(om*time4[i])-exp(-mu4*(time4[i]-start4[i]))*cos(om)*start4[i]));
+                    ((a4*p4)/mu4)*(cos(om*time4[i])-exp(-mu4*(time4[i]-start4[i]))*cos(om*start4[i]))-
+                     ((a4*p4)/(om*mu4))*(1/(1+(1/(om^2*mu4^2))))*((1/mu4)*(sin(om*time4[i])-exp(-mu4*(time4[i]-start4[i]))*sin(om*start4[i]))+
+                     (1/(om*mu4^2))*(cos(om*time4[i])-exp(-mu4*(time4[i]-start4[i]))*cos(om*start4[i])));
         else if(period4[i]==3)
         biomass4[i]= (p4)/mu4*(1-exp(-mu4*(time4[i]-start4[i])))+
-                    ((a4*p4)/mu4)*(cos(om*time4[i])-exp(-mu4*(time4[i]-start4[i]))*cos(om)*start4[i])-
-                     ((a4*p4)/(om*mu4))*(1/(1+(1/(om^2*mu4^2))))*((1/mu4)*(sin(om)*time4[i]-exp(-mu4*(time4[i]-start4[i]))*sin(om)*start4[i])+
-                     (1/(om*mu4^2))*(cos(om*time4[i])-exp(-mu4*(time4[i]-start4[i]))*cos(om)*start4[i]));
+                    ((a4*p4)/mu4)*(cos(om*time4[i])-exp(-mu4*(time4[i]-start4[i]))*cos(om*start4[i]))-
+                     ((a4*p4)/(om*mu4))*(1/(1+(1/(om^2*mu4^2))))*((1/mu4)*(sin(om*time4[i])-exp(-mu4*(time4[i]-start4[i]))*sin(om*start4[i]))+
+                     (1/(om*mu4^2))*(cos(om*time4[i])-exp(-mu4*(time4[i]-start4[i]))*cos(om*start4[i])));
         else if(period4[i]==4)
         biomass4[i]= (p4)/mu4*(1-exp(-mu4*(time4[i]-start4[i])))+
-                    ((a4*p4)/mu4)*(cos(om*time4[i])-exp(-mu4*(time4[i]-start4[i]))*cos(om)*start4[i])-
-                     ((a4*p4)/(om*mu4))*(1/(1+(1/(om^2*mu4^2))))*((1/mu4)*(sin(om)*time4[i]-exp(-mu4*(time4[i]-start4[i]))*sin(om)*start4[i])+
-                     (1/(om*mu4^2))*(cos(om*time4[i])-exp(-mu4*(time4[i]-start4[i]))*cos(om)*start4[i]));
+                    ((a4*p4)/mu4)*(cos(om*time4[i])-exp(-mu4*(time4[i]-start4[i]))*cos(om*start4[i]))-
+                     ((a4*p4)/(om*mu4))*(1/(1+(1/(om^2*mu4^2))))*((1/mu4)*(sin(om*time4[i])-exp(-mu4*(time4[i]-start4[i]))*sin(om*start4[i]))+
+                     (1/(om*mu4^2))*(cos(om*time4[i])-exp(-mu4*(time4[i]-start4[i]))*cos(om*start4[i])));
 
         biom4[i] ~ normal(biomass4[i], // this line compares the simulation with the results
                            max_sd4); //the sigma is the standard deviation in the data
@@ -210,24 +210,24 @@ model { //this block runs the model and the MCMC sampling
         a5= z*tree5[i]; // calculating a
         if(period5[i]==1)
         biomass5[i]= (p5)/mu5*(1-exp(-mu5*(time5[i]-start5[i])))+
-                    ((a5*p5)/mu5)*(cos(om*time5[i])-exp(-mu5*(time5[i]-start5[i]))*cos(om)*start5[i])-
-                     ((a5*p5)/(om*mu5))*(1/(1+(1/(om^2*mu5^2))))*((1/mu5)*(sin(om)*time5[i]-exp(-mu5*(time4[i]-start5[i]))*sin(om)*start5[i])+
-                     (1/(om*mu5^2))*(cos(om*time5[i])-exp(-mu5*(time5[i]-start5[i]))*cos(om)*start5[i]));
+                    ((a5*p5)/mu5)*(cos(om*time5[i])-exp(-mu5*(time5[i]-start5[i]))*cos(om*start5[i]))-
+                     ((a5*p5)/(om*mu5))*(1/(1+(1/(om^2*mu5^2))))*((1/mu5)*(sin(om*time5[i])-exp(-mu5*(time4[i]-start5[i]))*sin(om*start5[i]))+
+                     (1/(om*mu5^2))*(cos(om*time5[i])-exp(-mu5*(time5[i]-start5[i]))*cos(om*start5[i])));
         else if(period5[i]==2)
         biomass5[i]= (p5)/mu5*(1-exp(-mu5*(time5[i]-start5[i])))+
-                    ((a5*p5)/mu5)*(cos(om*time5[i])-exp(-mu5*(time5[i]-start5[i]))*cos(om)*start5[i])-
-                     ((a5*p5)/(om*mu5))*(1/(1+(1/(om^2*mu5^2))))*((1/mu5)*(sin(om)*time5[i]-exp(-mu5*(time4[i]-start5[i]))*sin(om)*start5[i])+
-                     (1/(om*mu5^2))*(cos(om*time5[i])-exp(-mu5*(time5[i]-start5[i]))*cos(om)*start5[i]));
+                    ((a5*p5)/mu5)*(cos(om*time5[i])-exp(-mu5*(time5[i]-start5[i]))*cos(om*start5[i]))-
+                     ((a5*p5)/(om*mu5))*(1/(1+(1/(om^2*mu5^2))))*((1/mu5)*(sin(om*time5[i])-exp(-mu5*(time4[i]-start5[i]))*sin(om*start5[i]))+
+                     (1/(om*mu5^2))*(cos(om*time5[i])-exp(-mu5*(time5[i]-start5[i]))*cos(om*start5[i])));
         else if(period5[i]==3)
         biomass5[i]= (p5)/mu5*(1-exp(-mu5*(time5[i]-start5[i])))+
-                    ((a5*p5)/mu5)*(cos(om*time5[i])-exp(-mu5*(time5[i]-start5[i]))*cos(om)*start5[i])-
-                     ((a5*p5)/(om*mu5))*(1/(1+(1/(om^2*mu5^2))))*((1/mu5)*(sin(om)*time5[i]-exp(-mu5*(time4[i]-start5[i]))*sin(om)*start5[i])+
-                     (1/(om*mu5^2))*(cos(om*time5[i])-exp(-mu5*(time5[i]-start5[i]))*cos(om)*start5[i]));
+                    ((a5*p5)/mu5)*(cos(om*time5[i])-exp(-mu5*(time5[i]-start5[i]))*cos(om*start5[i]))-
+                     ((a5*p5)/(om*mu5))*(1/(1+(1/(om^2*mu5^2))))*((1/mu5)*(sin(om*time5[i])-exp(-mu5*(time4[i]-start5[i]))*sin(om*start5[i]))+
+                     (1/(om*mu5^2))*(cos(om*time5[i])-exp(-mu5*(time5[i]-start5[i]))*cos(om*start5[i])));
         else if(period5[i]==4)
         biomass5[i]= (p5)/mu5*(1-exp(-mu5*(time5[i]-start5[i])))+
-                    ((a5*p5)/mu5)*(cos(om*time5[i])-exp(-mu5*(time5[i]-start5[i]))*cos(om)*start5[i])-
-                     ((a5*p5)/(om*mu5))*(1/(1+(1/(om^2*mu5^2))))*((1/mu5)*(sin(om)*time5[i]-exp(-mu5*(time4[i]-start5[i]))*sin(om)*start5[i])+
-                     (1/(om*mu5^2))*(cos(om*time5[i])-exp(-mu5*(time5[i]-start5[i]))*cos(om)*start5[i]));
+                    ((a5*p5)/mu5)*(cos(om*time5[i])-exp(-mu5*(time5[i]-start5[i]))*cos(om*start5[i]))-
+                     ((a5*p5)/(om*mu5))*(1/(1+(1/(om^2*mu5^2))))*((1/mu5)*(sin(om*time5[i])-exp(-mu5*(time4[i]-start5[i]))*sin(om*start5[i]))+
+                     (1/(om*mu5^2))*(cos(om*time5[i])-exp(-mu5*(time5[i]-start5[i]))*cos(om*start5[i])));
 
         biom5[i] ~ normal(biomass5[i], // this line compares the simulation with the results
                            max_sd5); //the sigma is the standard deviation in the data
@@ -235,24 +235,24 @@ model { //this block runs the model and the MCMC sampling
         a6= z*tree6[i]; // calculating a
         if(period6[i]==1)
         biomass6[i]= (p6)/mu6*(1-exp(-mu6*(time6[i]-start6[i])))+
-                    ((a6*p6)/mu6)*(cos(om*time6[i])-exp(-mu6*(time6[i]-start6[i]))*cos(om)*start6[i])-
-                     ((a6*p6)/(om*mu6))*(1/(1+(1/(om^2*mu6^2))))*((1/mu6)*(sin(om)*time6[i]-exp(-mu6*(time6[i]-start6[i]))*sin(om)*start6[i])+
-                     (1/(om*mu6^2))*(cos(om*time6[i])-exp(-mu6*(time6[i]-start6[i]))*cos(om)*start6[i]));
+                    ((a6*p6)/mu6)*(cos(om*time6[i])-exp(-mu6*(time6[i]-start6[i]))*cos(om*start6[i]))-
+                     ((a6*p6)/(om*mu6))*(1/(1+(1/(om^2*mu6^2))))*((1/mu6)*(sin(om*time6[i])-exp(-mu6*(time6[i]-start6[i]))*sin(om*start6[i]))+
+                     (1/(om*mu6^2))*(cos(om*time6[i])-exp(-mu6*(time6[i]-start6[i]))*cos(om*start6[i])));
         else if(period6[i]==2)
         biomass6[i]= (p6)/mu6*(1-exp(-mu6*(time6[i]-start6[i])))+
-                    ((a6*p6)/mu6)*(cos(om*time6[i])-exp(-mu6*(time6[i]-start6[i]))*cos(om)*start6[i])-
-                     ((a6*p6)/(om*mu6))*(1/(1+(1/(om^2*mu6^2))))*((1/mu6)*(sin(om)*time6[i]-exp(-mu6*(time6[i]-start6[i]))*sin(om)*start6[i])+
-                     (1/(om*mu6^2))*(cos(om*time6[i])-exp(-mu6*(time6[i]-start6[i]))*cos(om)*start6[i]));
+                    ((a6*p6)/mu6)*(cos(om*time6[i])-exp(-mu6*(time6[i]-start6[i]))*cos(om*start6[i]))-
+                     ((a6*p6)/(om*mu6))*(1/(1+(1/(om^2*mu6^2))))*((1/mu6)*(sin(om*time6[i])-exp(-mu6*(time6[i]-start6[i]))*sin(om*start6[i]))+
+                     (1/(om*mu6^2))*(cos(om*time6[i])-exp(-mu6*(time6[i]-start6[i]))*cos(om*start6[i])));
         else if(period6[i]==3)
         biomass6[i]= (p6)/mu6*(1-exp(-mu6*(time6[i]-start6[i])))+
-                    ((a6*p6)/mu6)*(cos(om*time6[i])-exp(-mu6*(time6[i]-start6[i]))*cos(om)*start6[i])-
-                     ((a6*p6)/(om*mu6))*(1/(1+(1/(om^2*mu6^2))))*((1/mu6)*(sin(om)*time6[i]-exp(-mu6*(time6[i]-start6[i]))*sin(om)*start6[i])+
-                     (1/(om*mu6^2))*(cos(om*time6[i])-exp(-mu6*(time6[i]-start6[i]))*cos(om)*start6[i]));
+                    ((a6*p6)/mu6)*(cos(om*time6[i])-exp(-mu6*(time6[i]-start6[i]))*cos(om*start6[i]))-
+                     ((a6*p6)/(om*mu6))*(1/(1+(1/(om^2*mu6^2))))*((1/mu6)*(sin(om*time6[i])-exp(-mu6*(time6[i]-start6[i]))*sin(om*start6[i]))+
+                     (1/(om*mu6^2))*(cos(om*time6[i])-exp(-mu6*(time6[i]-start6[i]))*cos(om*start6[i])));
         else if(period6[i]==4)
         biomass6[i]= (p6)/mu6*(1-exp(-mu6*(time6[i]-start6[i])))+
-                    ((a6*p6)/mu6)*(cos(om*time6[i])-exp(-mu6*(time6[i]-start6[i]))*cos(om)*start6[i])-
-                     ((a6*p6)/(om*mu6))*(1/(1+(1/(om^2*mu6^2))))*((1/mu6)*(sin(om)*time6[i]-exp(-mu6*(time6[i]-start6[i]))*sin(om)*start6[i])+
-                     (1/(om*mu6^2))*(cos(om*time6[i])-exp(-mu6*(time6[i]-start6[i]))*cos(om)*start6[i]));
+                    ((a6*p6)/mu6)*(cos(om*time6[i])-exp(-mu6*(time6[i]-start6[i]))*cos(om*start6[i]))-
+                     ((a6*p6)/(om*mu6))*(1/(1+(1/(om^2*mu6^2))))*((1/mu6)*(sin(om*time6[i])-exp(-mu6*(time6[i]-start6[i]))*sin(om*start6[i]))+
+                     (1/(om*mu6^2))*(cos(om*time6[i])-exp(-mu6*(time6[i]-start6[i]))*cos(om*start6[i])));
         biom6[i] ~ normal(biomass6[i], // this line compares the simulation with the results
                            max_sd6); //the sigma is the standard deviation in the data
 
