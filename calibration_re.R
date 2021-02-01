@@ -9,6 +9,7 @@ library(lubridate) #
 library(shape) #
 library(violinmplot) #
 library(readODS)
+library(randomForest)
 
 
 ###defining some custom functions
@@ -120,32 +121,75 @@ periods_vec6<-periods_vec[dataset$classes==levels(dataset$classes)[6]]
 0.05*range(c(tree1, tree2, tree3, tree4, tree5, tree6))
 
 ###assemble the calibration data for STAN
-calib_data<-list(N=length(biom1),
+biomass_tab<-cbind(biom1,
+                   t1_elaps=time1-start1,
+                   biom2,
+                   t1_elaps=time2-start2,
+                   biom3,
+                   t1_elaps=time3-start3,
+                   biom4,
+                   t1_elaps=time4-start4,
+                   biom5,
+                   t1_elaps=time5-start5,
+                   biom6,
+                   t1_elaps=time6-start6)
+colnames(biomass_tab)<-c("biom1", "t1",
+                         "biom2", "t2",
+                         "biom3", "t3",
+                         "biom4", "t4",
+                         "biom5", "t5",
+                         "biom6", "t6")
+biomass_tab<-as.data.frame(biomass_tab)
+
+calib_data<-list(N=dim(biomass_tab)[1],
                  max_sd1=sd(biom1),
                  max_sd2=sd(biom2),
                  max_sd3=sd(biom3),
                  max_sd4=sd(biom4),
                  max_sd5=sd(biom5),
                  max_sd6=sd(biom6),
-                 biom1=biom1,
-                 t_1=time1,
-                 t0_1=start1,
-                 biom2=biom2,
-                 t_2=time2,
-                 t0_2=start2,
-                 biom3=biom3,
-                 t_3=time3,
-                 t0_3=start3,
-                 biom4=biom4,
-                 t_4=time4,
-                 t0_4=start4,
-                 biom5=biom5,
-                 t_5=time5,
-                 t0_5=start5,
-                 biom6=biom6,
-                 t_6=time6,
-                 t0_6=start6)
+                 biom1=biomass_tab$biom1, 
+                 t1=biomass_tab$t1,
+                 biom2=biomass_tab$biom2, 
+                 t2=biomass_tab$t2,
+                 biom3=biomass_tab$biom3, 
+                 t3=biomass_tab$t3,
+                 biom4=biomass_tab$biom4, 
+                 t4=biomass_tab$t4,
+                 biom5=biomass_tab$biom5, 
+                 t5=biomass_tab$t5,
+                 biom6=biomass_tab$biom6, 
+                 t6=biomass_tab$t6)
 
+
+########################################################################################################
+########################################  DATA PLOTTING   ##############################################
+
+png("boxplot_plots.png", width = 2500, height = 1500, res=300)
+boxplot(dataset$Biomass.g.m2 ~ dataset$Treatment.name, xlab="Plot", ylab="Biomass g m2")
+dev.off()
+
+
+
+png("boxplot_plots_startmonth.png", width = 3500, height = 1500, res=300)
+month_name_vec<-month.abb[month(as.Date(dataset$Start))]
+boxplot(dataset$Biomass.g.m2 ~ dataset$Treatment.name+month_name_vec, xlab="Plot", ylab="Biomass g m2", las=2, 
+        col =times_palette[c(1,1,1,1,2,2,2,2,2,2,2,2,3,3,3,3,3,3,4,4,4,4,4,4,5,5,5,5,5,5)])
+dev.off()
+
+
+
+rf<-randomForest(dataset$Biomass.g.m2~dataset$Treatment.name+dataset$Start+dataset$End+dataset$classes+
+                   dataset$Tree_vol_increment.m3.ha.Y.+dataset$Incubation.time.days)
+
+png("rf.png", height=3500, width = 15600, res=300)
+par(mfrow=c(2,1))
+varImpPlot(rf, main=paste("Variance explained=",round(tail(rf$rsq, 1),2)), labels =rev(c("Treatments", "Incubation time", "Start date", "Plot", "End date", "Tree increment")))
+
+plot(rf$predicted, dataset$Biomass.g.m2, pch=as.numeric(as.factor(dataset$classes)), xlab="Predicted", ylab="Measured", col=times_palette[as.numeric(as.factor(dataset$classes))])
+text(rf$predicted, dataset$Biomass.g.m2+0.4, dataset$No.1, cex=0.5, col="darkgrey")
+legend("topleft", levels(as.factor(dataset$classes)), pch=seq(1:6), bty="n", col = times_palette)
+dev.off()
 
 
 ########################################################################################################
@@ -153,7 +197,7 @@ calib_data<-list(N=length(biom1),
 Sys.setenv(STAN_NUM_THREADS=4)
 iterations=5000
 chain_length=floor(iterations/2) #the algorithm will discard the initial iterations for warmup
-fit <- stan(file = 'Myc_model_trees_simplified_alt.stan', data = calib_data,  chains = 4, iter = iterations, cores=4, warmup = iterations-chain_length)
+fit <- stan(file = 'Myc_model_re.stan', data = calib_data,  chains = 4, iter = iterations, cores=4, warmup = iterations-chain_length)
 ########################################################################################################
 
 
@@ -296,6 +340,9 @@ resampled_posteriors<-posteriors[resampling_vector,,]
 dim(posteriors)
 dim(resampled_posteriors)
 
+posteriors$p2
+resampled_posteriors$p2
+
 # plot the simulations
 time_sim=180
 time_simulation=seq(from=0, to=time_sim)+153
@@ -318,12 +365,12 @@ dev.off()
 
 
 #create the table to hold the posterior probability density for each of the data points
-biomass_simulated_p1<-mat.or.vec(dim(resampled_posteriors)[1], length(calib_data$biom1))
-biomass_simulated_p2<-mat.or.vec(dim(resampled_posteriors)[1], length(calib_data$biom1))
-biomass_simulated_p3<-mat.or.vec(dim(resampled_posteriors)[1], length(calib_data$biom1))
-biomass_simulated_p4<-mat.or.vec(dim(resampled_posteriors)[1], length(calib_data$biom1))
-biomass_simulated_p5<-mat.or.vec(dim(resampled_posteriors)[1], length(calib_data$biom1))
-biomass_simulated_p6<-mat.or.vec(dim(resampled_posteriors)[1], length(calib_data$biom1))
+biomass_simulated_p1<-mat.or.vec(dim(resampled_posteriors)[1], dim(biomass_tab)[1])
+biomass_simulated_p2<-mat.or.vec(dim(resampled_posteriors)[1], dim(biomass_tab)[1])
+biomass_simulated_p3<-mat.or.vec(dim(resampled_posteriors)[1], dim(biomass_tab)[1])
+biomass_simulated_p4<-mat.or.vec(dim(resampled_posteriors)[1], dim(biomass_tab)[1])
+biomass_simulated_p5<-mat.or.vec(dim(resampled_posteriors)[1], dim(biomass_tab)[1])
+biomass_simulated_p6<-mat.or.vec(dim(resampled_posteriors)[1], dim(biomass_tab)[1])
 
 RMSE_simulated_p1<-mat.or.vec(dim(resampled_posteriors)[1], 1)
 RMSE_simulated_p2<-mat.or.vec(dim(resampled_posteriors)[1], 1)
@@ -332,19 +379,19 @@ RMSE_simulated_p4<-mat.or.vec(dim(resampled_posteriors)[1], 1)
 RMSE_simulated_p5<-mat.or.vec(dim(resampled_posteriors)[1], 1)
 RMSE_simulated_p6<-mat.or.vec(dim(resampled_posteriors)[1], 1)
 
-res_simulated_p1<-mat.or.vec(dim(resampled_posteriors)[1], length(calib_data$t_1))
-res_simulated_p2<-mat.or.vec(dim(resampled_posteriors)[1], length(calib_data$t_2))
-res_simulated_p3<-mat.or.vec(dim(resampled_posteriors)[1], length(calib_data$t_3))
-res_simulated_p4<-mat.or.vec(dim(resampled_posteriors)[1], length(calib_data$t_4))
-res_simulated_p5<-mat.or.vec(dim(resampled_posteriors)[1], length(calib_data$t_5))
-res_simulated_p6<-mat.or.vec(dim(resampled_posteriors)[1], length(calib_data$t_6))
+res_simulated_p1<-mat.or.vec(dim(resampled_posteriors)[1], dim(biomass_tab)[1])
+res_simulated_p2<-mat.or.vec(dim(resampled_posteriors)[1], dim(biomass_tab)[1])
+res_simulated_p3<-mat.or.vec(dim(resampled_posteriors)[1], dim(biomass_tab)[1])
+res_simulated_p4<-mat.or.vec(dim(resampled_posteriors)[1], dim(biomass_tab)[1])
+res_simulated_p5<-mat.or.vec(dim(resampled_posteriors)[1], dim(biomass_tab)[1])
+res_simulated_p6<-mat.or.vec(dim(resampled_posteriors)[1], dim(biomass_tab)[1])
 
-cv_simulated_p1<-mat.or.vec(dim(resampled_posteriors)[1], length(calib_data$t_1))
-cv_simulated_p2<-mat.or.vec(dim(resampled_posteriors)[1], length(calib_data$t_2))
-cv_simulated_p3<-mat.or.vec(dim(resampled_posteriors)[1], length(calib_data$t_3))
-cv_simulated_p4<-mat.or.vec(dim(resampled_posteriors)[1], length(calib_data$t_4))
-cv_simulated_p5<-mat.or.vec(dim(resampled_posteriors)[1], length(calib_data$t_5))
-cv_simulated_p6<-mat.or.vec(dim(resampled_posteriors)[1], length(calib_data$t_6))
+cv_simulated_p1<-mat.or.vec(dim(resampled_posteriors)[1], dim(biomass_tab)[1])
+cv_simulated_p2<-mat.or.vec(dim(resampled_posteriors)[1], dim(biomass_tab)[1])
+cv_simulated_p3<-mat.or.vec(dim(resampled_posteriors)[1], dim(biomass_tab)[1])
+cv_simulated_p4<-mat.or.vec(dim(resampled_posteriors)[1], dim(biomass_tab)[1])
+cv_simulated_p5<-mat.or.vec(dim(resampled_posteriors)[1], dim(biomass_tab)[1])
+cv_simulated_p6<-mat.or.vec(dim(resampled_posteriors)[1], dim(biomass_tab)[1])
 
 
   #run the model for each parameter set
@@ -366,48 +413,37 @@ cv_simulated_p6<-mat.or.vec(dim(resampled_posteriors)[1], length(calib_data$t_6)
     om=(2*pi)/365.25
     a=resampled_posteriors$a[i]
     
-    for(k in 1:length(periods_vec1)){
-        biomass_simulated_p1[i,k]<- (p1/mu1)*(1-exp(-mu1*(calib_data$t_1[k]-calib_data$t0_1[k])))#+
-                                    # ((a*p1)/mu1)*(cos(om*calib_data$t_1[k])-exp(-mu1*(calib_data$t_1[k]-calib_data$t0_1[k]))*cos(om*calib_data$t0_1[k]))-
-                                    # ((a*p1)/(om*mu1))*(1/(1+(1/(om^2*mu1^2))))*((1/mu1)*(sin(om*calib_data$t_1[k])-exp(-mu1*(calib_data$t_1[k]-calib_data$t0_1[k]))*sin(om*calib_data$t0_1[k]))+
-                                    #                                             (1/(om*mu1^2))*(cos(om*calib_data$t_1[k])-exp(-mu1*(calib_data$t_1[k]-calib_data$t0_1[k]))*cos(om*calib_data$t0_1[k])));
-                                    }
-      
-      for(k in 1:length(periods_vec1)){
-        biomass_simulated_p2[i,k]<- (p2/mu2)*(1-exp(-mu2*(calib_data$t_2[k]-calib_data$t0_2[k])))#+
-                                        # ((a*p2)/mu2)*(cos(om*calib_data$t_2[k])-exp(-mu2*(calib_data$t_2[k]-calib_data$t0_2[k]))*cos(om*calib_data$t0_2[k]))-
-                                        # ((a*p2)/(om*mu2))*(1/(1+(1/(om^2*mu2^2))))*((1/mu2)*(sin(om*calib_data$t_2[k])-exp(-mu2*(calib_data$t_2[k]-calib_data$t0_2[k]))*sin(om*calib_data$t0_2[k]))+
-                                        #                                             (1/(om*mu2^2))*(cos(om*calib_data$t_2[k])-exp(-mu2*(calib_data$t_2[k]-calib_data$t0_2[k]))*cos(om*calib_data$t0_2[k])));
-                                    }
-  
-    for(k in 1:length(periods_vec1)){
-        biomass_simulated_p3[i,k]<- (p3/mu3)*(1-exp(-mu3*(calib_data$t_3[k]-calib_data$t0_3[k])))#+
-                                      # ((a*p3)/mu3)*(cos(om*calib_data$t_3[k])-exp(-mu3*(calib_data$t_3[k]-calib_data$t0_3[k]))*cos(om*calib_data$t0_3[k]))-
-                                      # ((a*p3)/(om*mu3))*(1/(1+(1/(om^2*mu3^2))))*((1/mu3)*(sin(om*calib_data$t_3[k])-exp(-mu3*(calib_data$t_3[k]-calib_data$t0_3[k]))*sin(om*calib_data$t0_3[k]))+
-                                      #                                             (1/(om*mu3^2))*(cos(om*calib_data$t_3[k])-exp(-mu3*(calib_data$t_3[k]-calib_data$t0_3[k]))*cos(om*calib_data$t0_3[k])));
-                                    }
+        biomass_simulated_p1[i,]<- (p1/mu1)*(1-exp(-mu1*(calib_data$t1)))#+
+                                    # ((a*p1)/mu1)*(cos(om*calib_data$t_1)-exp(-mu1*(calib_data$t1))*cos(om*calib_data$t0_1))-
+                                    # ((a*p1)/(om*mu1))*(1/(1+(1/(om^2*mu1^2))))*((1/mu1)*(sin(om*calib_data$t_1)-exp(-mu1*(calib_data$t1))*sin(om*calib_data$t0_1))+
+                                    #                                             (1/(om*mu1^2))*(cos(om*calib_data$t_1)-exp(-mu1*(calib_data$t1))*cos(om*calib_data$t0_1)));
 
-    for(k in 1:length(periods_vec1)){
-        biomass_simulated_p4[i,k]<- (p4/mu4)*(1-exp(-mu4*(calib_data$t_4[k]-calib_data$t0_4[k])))#+
-                                    # ((a*p4)/mu4)*(cos(om*calib_data$t_4[k])-exp(-mu4*(calib_data$t_4[k]-calib_data$t0_4[k]))*cos(om*calib_data$t0_4[k]))-
-                                    # ((a*p4)/(om*mu4))*(1/(1+(1/(om^2*mu4^2))))*((1/mu4)*(sin(om*calib_data$t_4[k])-exp(-mu4*(calib_data$t_4[k]-calib_data$t0_4[k]))*sin(om*calib_data$t0_4[k]))+
-                                    #                                             (1/(om*mu4^2))*(cos(om*calib_data$t_4[k])-exp(-mu4*(calib_data$t_4[k]-calib_data$t0_4[k]))*cos(om*calib_data$t0_4[k])));
-                                    }
 
-    for(k in 1:length(periods_vec1)){
-        biomass_simulated_p5[i,k]<- (p5/mu5)*(1-exp(-mu5*(calib_data$t_5[k]-calib_data$t0_5[k])))#+
-                                    # ((a*p5)/mu5)*(cos(om*calib_data$t_5[k])-exp(-mu5*(calib_data$t_5[k]-calib_data$t0_5[k]))*cos(om*calib_data$t0_5[k]))-
-                                    # ((a*p5)/(om*mu5))*(1/(1+(1/(om^2*mu5^2))))*((1/mu5)*(sin(om*calib_data$t_5[k])-exp(-mu5*(calib_data$t_5[k]-calib_data$t0_5[k]))*sin(om*calib_data$t0_5[k]))+
-                                    #                                              (1/(om*mu5^2))*(cos(om*calib_data$t_5[k])-exp(-mu5*(calib_data$t_5[k]-calib_data$t0_5[k]))*cos(om*calib_data$t0_5[k])));
-                                  }
+        biomass_simulated_p2[i,]<- (p2/mu2)*(1-exp(-mu2*(calib_data$t2)))#+
+                                        # ((a*p2)/mu2)*(cos(om*calib_data$t_2)-exp(-mu2*(calib_data$t2))*cos(om*calib_data$t0_2))-
+                                        # ((a*p2)/(om*mu2))*(1/(1+(1/(om^2*mu2^2))))*((1/mu2)*(sin(om*calib_data$t_2)-exp(-mu2*(calib_data$t2))*sin(om*calib_data$t0_2))+
+                                        #                                             (1/(om*mu2^2))*(cos(om*calib_data$t_2)-exp(-mu2*(calib_data$t2))*cos(om*calib_data$t0_2)));
 
-    for(k in 1:length(periods_vec1)){
-        biomass_simulated_p6[i,k]<- (p6/mu6)*(1-exp(-mu6*(calib_data$t_6[k]-calib_data$t0_6[k])))#+
-                                    # ((a*p6)/mu6)*(cos(om*calib_data$t_6[k])-exp(-mu6*(calib_data$t_6[k]-calib_data$t0_6[k]))*cos(om*calib_data$t0_6[k]))-
-                                    # ((a*p6)/(om*mu6))*(1/(1+(1/(om^2*mu6^2))))*((1/mu6)*(sin(om*calib_data$t_6[k])-exp(-mu6*(calib_data$t_6[k]-calib_data$t0_6[k]))*sin(om*calib_data$t0_6[k]))+
-                                    #                                              (1/(om*mu6^2))*(cos(om*calib_data$t_6[k])-exp(-mu6*(calib_data$t_6[k]-calib_data$t0_6[k]))*cos(om*calib_data$t0_6[k])));
-                                  }
-
+        biomass_simulated_p3[i,]<- (p3/mu3)*(1-exp(-mu3*(calib_data$t3)))#+
+                                      # ((a*p3)/mu3)*(cos(om*calib_data$t_3)-exp(-mu3*(calib_data$t3))*cos(om*calib_data$t0_3))-
+                                      # ((a*p3)/(om*mu3))*(1/(1+(1/(om^2*mu3^2))))*((1/mu3)*(sin(om*calib_data$t_3)-exp(-mu3*(calib_data$t3))*sin(om*calib_data$t0_3))+
+                                      #                                             (1/(om*mu3^2))*(cos(om*calib_data$t_3)-exp(-mu3*(calib_data$t3))*cos(om*calib_data$t0_3)));
+        
+        biomass_simulated_p4[i,]<- (p4/mu4)*(1-exp(-mu4*(calib_data$t4)))#+
+                                    # ((a*p4)/mu4)*(cos(om*calib_data$t_4)-exp(-mu4*(calib_data$t4))*cos(om*calib_data$t0_4))-
+                                    # ((a*p4)/(om*mu4))*(1/(1+(1/(om^2*mu4^2))))*((1/mu4)*(sin(om*calib_data$t_4)-exp(-mu4*(calib_data$t4))*sin(om*calib_data$t0_4))+
+                                    #                                             (1/(om*mu4^2))*(cos(om*calib_data$t_4)-exp(-mu4*(calib_data$t4))*cos(om*calib_data$t0_4)));
+    
+        biomass_simulated_p5[i,]<- (p5/mu5)*(1-exp(-mu5*(calib_data$t5)))#+
+                                    # ((a*p5)/mu5)*(cos(om*calib_data$t_5)-exp(-mu5*(calib_data$t5))*cos(om*calib_data$t0_5))-
+                                    # ((a*p5)/(om*mu5))*(1/(1+(1/(om^2*mu5^2))))*((1/mu5)*(sin(om*calib_data$t_5)-exp(-mu5*(calib_data$t5))*sin(om*calib_data$t0_5))+
+                                    #                                              (1/(om*mu5^2))*(cos(om*calib_data$t_5)-exp(-mu5*(calib_data$t5))*cos(om*calib_data$t0_5)));
+    
+        biomass_simulated_p6[i,]<- (p6/mu6)*(1-exp(-mu6*(calib_data$t6)))#+
+                                    # ((a*p6)/mu6)*(cos(om*calib_data$t_6)-exp(-mu6*(calib_data$t6))*cos(om*calib_data$t0_6))-
+                                    # ((a*p6)/(om*mu6))*(1/(1+(1/(om^2*mu6^2))))*((1/mu6)*(sin(om*calib_data$t_6)-exp(-mu6*(calib_data$t6))*sin(om*calib_data$t0_6))+
+                                    #                                              (1/(om*mu6^2))*(cos(om*calib_data$t_6)-exp(-mu6*(calib_data$t6))*cos(om*calib_data$t0_6)));
+    
     # #calculate the RMSE for each parameter set
     RMSE_simulated_p1[i]<-rmse(biomass_simulated_p1[i,],calib_data$biom1)
     RMSE_simulated_p2[i]<-rmse(biomass_simulated_p2[i,],calib_data$biom2)
@@ -434,10 +470,69 @@ cv_simulated_p6<-mat.or.vec(dim(resampled_posteriors)[1], length(calib_data$t_6)
   }
 
 
-dim(biomass_simulated_p2)
 
-biom_range<-range(c(calib_data$biom1, calib_data$biom2, calib_data$biom3, calib_data$biom4, calib_data$biom5, calib_data$biom6),
-                  c(biomass_simulated_p1, biomass_simulated_p2, biomass_simulated_p3, biomass_simulated_p4, biomass_simulated_p5, biomass_simulated_p6), na.rm = T)
+
+
+
+#plotting the biomass simulation together with the data
+png("simulation.png", width=5000, height=2500, res=350)
+par(mfrow=c(2,3), mar=c(5,5,2,2))
+
+plot(biomass_tab$t1, biomass_tab$biom1, xlim=c(0,180), ylab="biomass", xlab="Incubation time (days)", pch=as.numeric(as.factor(start1)), main=class_names[1])
+polygon(c(biomass_tab$t1, rev(biomass_tab$t1)),
+        c(colMax(biomass_simulated_p1), rev(colMin(biomass_simulated_p1))), col=add.alpha(times_palette[1], 0.2), border=NA)
+lines(biomass_tab$t1, colMeans(biomass_simulated_p1), col=times_palette[1])
+points(biomass_tab$t1,biomass_tab$biom1, xlim=c(0,180),  pch=as.numeric(as.factor(start1)))
+legend("topleft", levels(as.factor(unique(start1)+182)), pch=unique(as.numeric(as.factor(start1))), bty="n")
+
+plot(biomass_tab$t2, biomass_tab$biom2, xlim=c(0,180), ylab="biomass", xlab="Incubation time (days)", pch=as.numeric(as.factor(start2)), main=class_names[2])
+polygon(c(biomass_tab$t2, rev(biomass_tab$t2)),
+        c(colMax(biomass_simulated_p2), rev(colMin(biomass_simulated_p2))), col=add.alpha(times_palette[2], 0.2), border=NA)
+lines(biomass_tab$t2, colMeans(biomass_simulated_p2), col=times_palette[2])
+points(biomass_tab$t2,biomass_tab$biom2, xlim=c(0,180),  pch=as.numeric(as.factor(start2)))
+legend("topleft", levels(as.factor(unique(start2)+182)), pch=unique(as.numeric(as.factor(start2))), bty="n")
+
+plot(biomass_tab$t3, biomass_tab$biom3, xlim=c(0,180), ylab="biomass", xlab="Incubation time (days)", pch=as.numeric(as.factor(start3)), main=class_names[3])
+polygon(c(biomass_tab$t3, rev(biomass_tab$t3)),
+        c(colMax(biomass_simulated_p3), rev(colMin(biomass_simulated_p3))), col=add.alpha(times_palette[3], 0.2), border=NA)
+lines(biomass_tab$t3, colMeans(biomass_simulated_p3), col=times_palette[3])
+points(biomass_tab$t3,biomass_tab$biom3, xlim=c(0,180),  pch=as.numeric(as.factor(start3)))
+legend("topleft", levels(as.factor(unique(start3)+182)), pch=unique(as.numeric(as.factor(start3))), bty="n")
+
+plot(biomass_tab$t4, biomass_tab$biom4, xlim=c(0,180), ylab="biomass", xlab="Incubation time (days)", pch=as.numeric(as.factor(start4)), main=class_names[4])
+polygon(c(biomass_tab$t4, rev(biomass_tab$t4)),
+        c(colMax(biomass_simulated_p4), rev(colMin(biomass_simulated_p4))), col=add.alpha(times_palette[4], 0.2), border=NA)
+lines(biomass_tab$t4, colMeans(biomass_simulated_p4), col=times_palette[4])
+points(biomass_tab$t4,biomass_tab$biom4, xlim=c(0,180),  pch=as.numeric(as.factor(start4)))
+legend("topleft", levels(as.factor(unique(start4)+182)), pch=unique(as.numeric(as.factor(start4))), bty="n")
+
+plot(biomass_tab$t5, biomass_tab$biom5, xlim=c(0,180), ylab="biomass", xlab="Incubation time (days)", pch=as.numeric(as.factor(start5)), main=class_names[5])
+polygon(c(biomass_tab$t5, rev(biomass_tab$t5)),
+        c(colMax(biomass_simulated_p5), rev(colMin(biomass_simulated_p5))), col=add.alpha(times_palette[5], 0.2), border=NA)
+lines(biomass_tab$t5, colMeans(biomass_simulated_p5), col=times_palette[5])
+points(biomass_tab$t5,biomass_tab$biom5, xlim=c(0,180),  pch=as.numeric(as.factor(start5)))
+legend("topleft", levels(as.factor(unique(start5)+182)), pch=unique(as.numeric(as.factor(start5))), bty="n")
+
+plot(biomass_tab$t6, biomass_tab$biom6, xlim=c(0,180), ylab="biomass", xlab="Incubation time (days)", pch=as.numeric(as.factor(start6)), main=class_names[6])
+polygon(c(biomass_tab$t6, rev(biomass_tab$t6)),
+        c(colMax(biomass_simulated_p6), rev(colMin(biomass_simulated_p6))), col=add.alpha(times_palette[6], 0.2), border=NA)
+lines(biomass_tab$t6, colMeans(biomass_simulated_p6), col=times_palette[6])
+points(biomass_tab$t6,biomass_tab$biom6, xlim=c(0,180),  pch=as.numeric(as.factor(start6)))
+legend("topleft", levels(as.factor(unique(start6)+182)), pch=unique(as.numeric(as.factor(start6))), bty="n")
+
+
+dev.off()
+
+
+
+png("data_sample", width=4000, height=2500, res=350)
+par(mfrow=c(2,3), mar=c(5,5,2,2))
+plot(biomass_tab$t6[as.factor(start6)==as.factor(start6)[1]], biomass_tab$biom6[as.factor(start6)==as.factor(start6)[1]], xlim=c(0,180), ylab="biomass", xlab="Incubation time (days)", ylim=c(0,15),  pch=as.numeric(as.factor(start6))[1], main=paste("phosphorous/urea start day", unique(start6)[1]+182))
+plot(biomass_tab$t6[as.factor(start6)==as.factor(start6)[2]], biomass_tab$biom6[as.factor(start6)==as.factor(start6)[2]], xlim=c(0,180), ylab="biomass", xlab="Incubation time (days)", ylim=c(0,15),  pch=as.numeric(as.factor(start6))[2], main=paste("phosphorous/urea start day", unique(start6)[2]+182))
+plot(biomass_tab$t6[as.factor(start6)==as.factor(start6)[3]], biomass_tab$biom6[as.factor(start6)==as.factor(start6)[3]], xlim=c(0,180), ylab="biomass", xlab="Incubation time (days)", ylim=c(0,15),  pch=as.numeric(as.factor(start6))[3], main=paste("phosphorous/urea start day", unique(start6)[3]+182))
+plot(biomass_tab$t6[as.factor(start6)==as.factor(start6)[4]], biomass_tab$biom6[as.factor(start6)==as.factor(start6)[4]], xlim=c(0,180), ylab="biomass", xlab="Incubation time (days)", ylim=c(0,15),  pch=as.numeric(as.factor(start6))[4], main=paste("phosphorous/urea start day", unique(start6)[4]+182))
+plot(biomass_tab$t6[as.factor(start6)==as.factor(start6)[5]], biomass_tab$biom6[as.factor(start6)==as.factor(start6)[5]], xlim=c(0,180), ylab="biomass", xlab="Incubation time (days)", ylim=c(0,15),  pch=as.numeric(as.factor(start6))[5], main=paste("phosphorous/urea start day", unique(start6)[5]+182))
+dev.off()
 
 
 
