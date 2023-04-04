@@ -45,7 +45,7 @@ times_palette_alpha<-pal_startrek("uniform", 0.5)(6)
 
 
 ###reading the data
-dataset<-read.csv(file = "../Data/Incubation_2015_juan.csv")
+dataset<-read.csv(file = "Incubation_2015.csv")
 dataset$Biomass.g.m2<-as.numeric(as.character(dataset$Biomass.g.m2)) # in case the column is read as a factor
 dataset$Incubation.time.days<-dataset$Incubation.time..months.*30 #to get the days
 dataset$classes<-as.factor(dataset$classes)
